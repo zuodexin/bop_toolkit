@@ -3,6 +3,7 @@
 
 """Visualizes object models in pose estimates saved in the BOP format."""
 
+import argparse
 import os
 import numpy as np
 import itertools
@@ -66,6 +67,18 @@ p = {
 }
 ################################################################################
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--result_filenames', default=p['result_filenames'])
+parser.add_argument('--datasets_path', default=p['datasets_path'])
+parser.add_argument('--vis_path', default=p['vis_path'])
+parser.add_argument('--n_top', default=p['n_top'], type=int)
+args = parser.parse_args()
+
+p['result_filenames'] = args.result_filenames.split(',')
+p['datasets_path'] = str(args.datasets_path)
+p['vis_path'] = str(args.vis_path)
+p['n_top'] = args.n_top
+
 
 # Load colors.
 colors_path = os.path.join(
@@ -103,7 +116,7 @@ for result_fname in p['result_filenames']:
   # Create a renderer.
   width, height = dp_split['im_size']
   ren = renderer.create_renderer(
-    width, height, p['renderer_type'], mode=renderer_mode)
+    width, height, p['renderer_type'], mode=renderer_mode, shading="flat")
 
   # Load object models.
   models = {}
@@ -118,7 +131,7 @@ for result_fname in p['result_filenames']:
   # Load pose estimates.
   misc.log('Loading pose estimates...')
   ests = inout.load_bop_results(
-    os.path.join(config.results_path, result_fname))
+    os.path.join(result_fname))
 
   # Organize the pose estimates by scene, image and object.
   misc.log('Organizing pose estimates...')
