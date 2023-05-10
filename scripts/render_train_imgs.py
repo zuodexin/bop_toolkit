@@ -3,6 +3,7 @@
 
 """Renders RGB-D images of an object model."""
 
+import argparse
 import os
 import cv2
 
@@ -34,6 +35,8 @@ elif dataset == 'icmi':
   radii = [500]
 elif dataset == 'icbin':
   radii = [450]
+elif dataset == 'robi':
+  radii = [350]
 else:
   raise ValueError('Unknown dataset.')
 
@@ -82,6 +85,14 @@ out_views_vis_tpath =\
   os.path.join('{out_path}', '{obj_id:06d}', 'views_radius={radius}.ply')
 ################################################################################
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--dataset', default=dataset)
+parser.add_argument('--datasets_path', default=datasets_path)
+args = parser.parse_args()
+
+dataset = str(args.dataset)
+datasets_path = str(args.datasets_path)
+out_tpath = os.path.join(f"{datasets_path}/{dataset}", 'templates')
 
 out_path = out_tpath.format(dataset=dataset)
 misc.ensure_dir(out_path)

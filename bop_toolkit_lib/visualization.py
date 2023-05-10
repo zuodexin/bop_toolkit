@@ -80,7 +80,7 @@ def depth_for_vis(depth, valid_start=0.2, valid_end=1.0):
   :return: Transformed depth image.
   """
   mask = depth > 0
-  depth_n = depth.astype(np.float)
+  depth_n = depth.astype(np.floating)
   depth_n[mask] -= depth_n[mask].min()
   depth_n[mask] /= depth_n[mask].max() / (valid_end - valid_start)
   depth_n[mask] += valid_start
@@ -192,6 +192,10 @@ def vis_object_poses(
           ren_rgb_info = write_text_on_image(
             ren_rgb_info, pose['text_info'], text_loc, color=text_color,
             size=text_size)
+  
+  ren_rgb_info = write_text_on_image(
+    ren_rgb_info, [{'name': '#detections', 'val': len(poses), 'fmt': ':d'}], (0,0), color=(1.0, 1.0, 1.0),
+    size=11)
 
   # Blend and save the RGB visualization.
   if vis_rgb:

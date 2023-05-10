@@ -3,6 +3,7 @@
 
 """Visualizes object models in the ground-truth poses."""
 
+import argparse
 import os
 import numpy as np
 
@@ -70,6 +71,17 @@ p = {
     '{im_id:06d}_depth_diff.jpg'),
 }
 ################################################################################
+parser = argparse.ArgumentParser()
+parser.add_argument('--datasets_path', default=p['datasets_path'])
+parser.add_argument('--dataset', default=p['dataset'])
+parser.add_argument('--vis_path', default=p['vis_path'])
+parser.add_argument('--dataset_split', default=p['dataset_split'])
+args = parser.parse_args()
+
+p['dataset'] = args.dataset
+p['datasets_path'] = str(args.datasets_path)
+p['vis_path'] = str(args.vis_path)
+p['dataset_split'] = str(args.dataset_split)
 
 
 # Load dataset parameters.

@@ -375,9 +375,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
       p['azimuth_range'] = None  # Not calculated yet.
       p['elev_range'] = None  # Not calculated yet.
       
-  elif dataset_name=="robi":
-    rgb_ext = ".bmp"
-    p['scene_ids'] = {'train': list(range(28)), 'test': list(range(28))}[split]
+  elif dataset_name == 'robi':
+    rgb_ext = ".png"
+    p['scene_ids'] = {'train': list(range(28)), 'test': list(range(28)), 'val': list(range(28))}[split]
     p['im_size'] = (1280, 720)
 
     if split == 'test':
