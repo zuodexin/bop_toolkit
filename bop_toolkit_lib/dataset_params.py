@@ -434,6 +434,19 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
     'mask_visib_tpath': join(
       split_path, '{scene_id:06d}', 'mask_visib',
       '{im_id:06d}_{gt_id:06d}.png'),
+    
+    'template_gt_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'scene_gt.json'),
+    
+    'template_camera_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'scene_camera.json'),
+    
+    'template_rgb_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'rgb', '{im_id:06d}.png'),
+    
+    'template_feature_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'feature', '{im_id:06d}.npy'),
+    
   })
 
   return p
