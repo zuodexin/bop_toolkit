@@ -165,6 +165,8 @@ for result_filename in p['result_filenames']:
     for obj_id in dp_model['obj_ids']:
       models[obj_id] = inout.load_ply(
         dp_model['model_tpath'].format(obj_id=obj_id))
+      print(dp_model['model_tpath'].format(obj_id=obj_id))
+      print("number of points:", len(models[obj_id]['pts']))
 
   # Load models info.
   models_info = None
@@ -288,7 +290,6 @@ for result_filename in p['result_filenames']:
           for gt_id, gt in enumerate(scene_gt[im_id]):
             if gt['obj_id'] != obj_id:
               continue
-
             # Ground-truth pose.
             R_g = gt['cam_R_m2c']
             t_g = gt['cam_t_m2c']

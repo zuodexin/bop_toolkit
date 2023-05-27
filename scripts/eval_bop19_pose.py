@@ -52,8 +52,8 @@ p = {
     #   'correct_th': [[th] for th in np.arange(5, 51, 5)]
     # },
     {
-      'n_top': -1,
-      'type': 'add',
+      'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'type': 'ad',
       'correct_th': [[0.1]]
     },
   ],
@@ -247,7 +247,7 @@ for result_filename in p['result_filenames']:
   # Final score for the given dataset.
   # final_scores['bop19_average_recall'] = np.mean([
   #   average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
-  final_scores['bop19_average_recall'] = np.mean([average_recalls['add']])
+  final_scores['bop19_average_recall'] = np.mean([average_recalls['ad']])
 
   # Average estimation time per image.
   final_scores['bop19_average_time_per_image'] = average_time_per_image

@@ -105,7 +105,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
     'hb': [6, 10, 11, 12, 13, 14, 18, 24, 29],
     'ycbv': [1, 13, 14, 16, 18, 19, 20, 21],
     'hope': None,  # Not defined yet.
-    'robi': None,  # Not defined yet.
+    'robi': [2, 4, 7],
   }[dataset_name]
 
   # T-LESS includes two types of object models, CAD and reconstructed.
@@ -438,15 +438,24 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
     'template_gt_tpath': join(
       base_path, 'templates', '{obj_id:06d}', 'scene_gt.json'),
     
+    'template_info_path': join(
+      base_path, 'templates', 'template_info.json'),
+    
     'template_camera_tpath': join(
       base_path, 'templates', '{obj_id:06d}', 'scene_camera.json'),
-    
-    'template_rgb_tpath': join(
-      base_path, 'templates', '{obj_id:06d}', 'rgb', '{im_id:06d}.png'),
     
     'template_feature_tpath': join(
       base_path, 'templates', '{obj_id:06d}', 'feature', '{im_id:06d}.npy'),
     
+    'template_rgb_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'rgb', '{im_id:06d}.png'),
+    
+    'template_depth_tpath': join(
+      base_path, 'templates', '{obj_id:06d}', 'depth', '{im_id:06d}.png'),
+    
+    'out_errors_tpath': os.path.join(
+      '{eval_path}', '{result_name}', '{error_sign}',
+      'errors_{scene_id:06d}.json')
   })
 
   return p
