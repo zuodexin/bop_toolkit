@@ -74,6 +74,33 @@ def create_annotation_info(annotation_id, image_id, object_id, binary_mask, boun
     
     return annotation_info
 
+def create_prediction_info(annotation_id, image_id, object_id, binary_mask, bounding_box, score, mask_encoding_format='rle', tolerance=2):
+    area = binary_mask.sum()
+    if area < 1:
+        return None
+    
+    if mask_encoding_format == 'rle':
+        segmentation = binary_mask_to_rle(binary_mask)
+    elif mask_encoding_format == 'polygon':
+        segmentation = binary_mask_to_polygon(binary_mask, tolerance)
+        if not segmentation:
+            return None
+    else:
+        raise RuntimeError("Unknown encoding format: {}".format(mask_encoding_format))
+
+    annotation_info = {
+        "id": annotation_id,
+        "image_id": image_id,
+        "category_id": object_id,
+        "area": int(area),
+        "bbox": bounding_box,
+        "segmentation": segmentation,
+        "score": score,
+        "width": binary_mask.shape[1],
+        "height": binary_mask.shape[0]
+    }
+    return annotation_info
+
 
 def merge_coco_results(existing_coco_results, new_coco_results, image_id_offset):
     """ Merges the two given coco result dicts into one.

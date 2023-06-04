@@ -8,6 +8,8 @@ import glob
 import os
 from os.path import join
 
+from numpy import version
+
 from bop_toolkit_lib import inout
 
 
@@ -377,7 +379,8 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
       
   elif dataset_name == 'robi':
     rgb_ext = ".png"
-    p['scene_ids'] = {'train': list(range(28)), 'test': list(range(28)), 'val': list(range(28))}[split]
+    # easy to mask mistake, use get_present_scene_ids instead
+    # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
     p['im_size'] = (1280, 720)
 
     if split == 'test':
@@ -413,6 +416,19 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
     # Path template to a file with the coco GT annotations.
     'scene_gt_coco_tpath': join(
       split_path, '{scene_id:06d}', 'scene_gt_coco.json'),
+
+    # 'coco_rgb_tpath': join(
+    #   os.path.dirname(datasets_path), 'coco', f'{split}', '{im_id}.png'),
+    
+    # Path template to a file with the coco GT annotations.
+    'gt_coco_tpath': join(
+      os.path.dirname(datasets_path), 'coco', 'annotations', f'gt_coco_{split}.json'),
+    
+    'pred_coco_tpath': join(
+      os.path.dirname(datasets_path), 'coco', 'predictions', '{tag}', f'pred_coco_{split}.json'),
+    
+    'vis_coco_tpath': join(
+      os.path.dirname(datasets_path), 'coco', 'predictions', '{tag}', 'vis/{im_id:06d}.png'),
 
     # Path template to a gray image.
     'gray_tpath': join(

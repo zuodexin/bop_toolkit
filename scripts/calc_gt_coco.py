@@ -3,6 +3,7 @@
 
 """Calculates Instance Mask Annotations in Coco Format."""
 
+import argparse
 import numpy as np
 import os
 import datetime
@@ -35,6 +36,21 @@ p = {
 
 }
 ################################################################################
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--dataset', default=p['dataset'])
+parser.add_argument('--dataset_split', default=p['dataset_split'])
+parser.add_argument('--datasets_path', default=p['datasets_path'])
+parser.add_argument('--dataset_split_type', default=None)
+parser.add_argument('--bbox_type', default="amodal")
+args = parser.parse_args()
+
+p['dataset'] = str(args.dataset)
+p['dataset_split'] = str(args.dataset_split)
+p['datasets_path'] = str(args.datasets_path)
+p['dataset_split_type'] = args.dataset_split_type
+p['bbox_type'] = args.bbox_type
+
 
 datasets_path = p['datasets_path']
 dataset_name = p['dataset']
@@ -99,11 +115,11 @@ for scene_id in dp_split['scene_ids']:
             mask_visib_p = dp_split['mask_visib_tpath'].format(scene_id=scene_id, im_id=im_id, gt_id=idx)
             mask_full_p = dp_split['mask_tpath'].format(scene_id=scene_id, im_id=im_id, gt_id=idx)
             
-            binary_inst_mask_visib = inout.load_depth(mask_visib_p).astype(np.bool)
+            binary_inst_mask_visib = inout.load_depth(mask_visib_p).astype(np.bool_)
             if binary_inst_mask_visib.sum() < 1:
                 continue
             if bbox_type == 'amodal':
-                binary_inst_mask_full = inout.load_depth(mask_full_p).astype(np.bool)
+                binary_inst_mask_full = inout.load_depth(mask_full_p).astype(np.bool_)
                 if binary_inst_mask_full.sum() < 1:
                     continue
                 bounding_box = pycoco_utils.bbox_from_binary_mask(binary_inst_mask_full)
