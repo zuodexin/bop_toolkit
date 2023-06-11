@@ -198,6 +198,24 @@ def load_scene_gt(path):
   return scene_gt
 
 
+def load_scene_gt_info(path):
+  scene_gt_info = load_json(path, keys_to_int=True)
+  for im_id, im_gt_info in scene_gt_info.items():
+    for info in im_gt_info:
+        if 'bbox_obj' in info.keys():
+          info["bbox_obj"] = np.array(info["bbox_obj"], np.floating)
+        if 'bbox_visib' in info.keys():
+          info["bbox_visib"] = np.array(info["bbox_visib"], np.floating)
+  return scene_gt_info
+
+
+def load_model_info(path):
+  model_info = load_json(path, keys_to_int=True)
+  for obj_id, info in model_info.items():
+    if 'symmetries_discrete' in info.keys():
+      info["symmetries_discrete"] = np.array(info["symmetries_discrete"], np.floating)
+  return model_info
+
 def save_scene_gt(path, scene_gt):
   """Saves ground-truth annotations to a JSON file.
 

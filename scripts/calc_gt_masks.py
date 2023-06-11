@@ -42,11 +42,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default=p['dataset'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
 parser.add_argument('--datasets_path', default=p['datasets_path'])
+parser.add_argument('--delta', default=p['delta'], type=float)
 args = parser.parse_args()
 
 p['dataset'] = str(args.dataset)
 p['dataset_split'] = str(args.dataset_split)
 p['datasets_path'] = str(args.datasets_path)
+p['delta'] = args.delta
 
 
 # Load dataset parameters.
