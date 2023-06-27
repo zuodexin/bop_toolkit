@@ -433,6 +433,12 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
     'vis_coco_tpath': join(
       os.path.dirname(datasets_path), 'coco', 'predictions', '{tag}', 'vis/{im_id:06d}.png'),
 
+    'pred_tpath': join(
+      datasets_path, dataset_name, 'predictions', f'{split}', '{tag}_'+f'{dataset_name}-test.csv'),
+
+    'vis_pred_path': join(
+      datasets_path, dataset_name, 'predictions', f'{split}', 'vis/{scene_id:06d}_{im_id:06d}.png'),
+
     # Path template to a gray image.
     'gray_tpath': join(
       split_path, '{scene_id:06d}', 'gray', '{im_id:06d}' + gray_ext),

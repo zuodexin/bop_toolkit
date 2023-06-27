@@ -64,6 +64,8 @@ p = {
   'vis_depth_diff_tpath': os.path.join(
     '{vis_path}', '{result_name}', '{scene_id:06d}',
     '{vis_name}_depth_diff.jpg'),
+
+  'min_visib': -1,
 }
 ################################################################################
 
@@ -72,12 +74,14 @@ parser.add_argument('--result_filenames', default=p['result_filenames'])
 parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--vis_path', default=p['vis_path'])
 parser.add_argument('--n_top', default=p['n_top'], type=int)
+parser.add_argument('--min_visib', default=-1, type=float)
 args = parser.parse_args()
 
 p['result_filenames'] = args.result_filenames.split(',')
 p['datasets_path'] = str(args.datasets_path)
 p['vis_path'] = str(args.vis_path)
 p['n_top'] = args.n_top
+p['min_visib'] = args.min_visib
 
 
 # Load colors.
@@ -147,6 +151,7 @@ for result_fname in p['result_filenames']:
       dp_split['scene_camera_tpath'].format(scene_id=scene_id))
     scene_gt = inout.load_scene_gt(
       dp_split['scene_gt_tpath'].format(scene_id=scene_id))
+    gt_info = inout.load_scene_gt_info(dp_split["scene_gt_info_tpath"].format(scene_id=scene_id))
 
     for im_ind, (im_id, im_ests) in enumerate(scene_ests.items()):
 
@@ -167,11 +172,13 @@ for result_fname in p['result_filenames']:
         obj_ests_sorted = sorted(
           obj_ests, key=lambda est: est['score'], reverse=True)
 
+        n_gt = sum([inst_gt['obj_id'] == obj_id and gt_info[im_id][gt_id]["visib_fract"] > p['min_visib']
+                    for gt_id, inst_gt in enumerate(scene_gt[im_id])])
+
         # Select the number of top estimated poses to visualize.
         if p['n_top'] == 0:  # All estimates are considered.
           n_top_curr = None
         elif p['n_top'] == -1:  # Given by the number of GT poses.
-          n_gt = sum([gt['obj_id'] == obj_id for gt in scene_gt[im_id]])
           n_top_curr = n_gt
         else:  # Specified by the parameter n_top.
           n_top_curr = p['n_top']
@@ -243,6 +250,6 @@ for result_fname in p['result_filenames']:
         visualization.vis_object_poses(
           poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
           vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
-          vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'])
+          vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt)
 
 misc.log('Done.')
