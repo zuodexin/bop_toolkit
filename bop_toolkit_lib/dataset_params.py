@@ -89,6 +89,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
     'ycbv': list(range(1, 22)),
     'hope': list(range(1, 29)),
     'robi': list(range(1, 8)),
+    'hw627': list(range(1, 4)),
   }[dataset_name]
 
   # ID's of objects with ambiguous views evaluated using the ADI pose error
@@ -108,6 +109,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
     'ycbv': [1, 13, 14, 16, 18, 19, 20, 21],
     'hope': None,  # Not defined yet.
     'robi': [2, 4, 7],
+    'hw627': [1,2,3,4],
   }[dataset_name]
 
   # T-LESS includes two types of object models, CAD and reconstructed.
@@ -390,6 +392,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
       p['depth_range'] = (346.31, 400)
       p['azimuth_range'] = (0, 2 * math.pi)
       p['elev_range'] = (-math.pi, math.pi)
+  elif dataset_name == 'hw627':
+    rgb_ext = ".png"
+    p['im_size'] = (512, 512)
   else:
     raise ValueError('Unknown BOP dataset ({}).'.format(dataset_name))
 
