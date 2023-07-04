@@ -250,6 +250,7 @@ for result_fname in p['result_filenames']:
         visualization.vis_object_poses(
           poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
           vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
-          vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt)
+          vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt,
+          scene_id = scene_id, im_id = im_id)
 
 misc.log('Done.')

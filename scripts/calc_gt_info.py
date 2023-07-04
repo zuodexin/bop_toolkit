@@ -11,6 +11,7 @@ selected dataset.
 
 import argparse
 import os
+from matplotlib import pyplot as plt
 import numpy as np
 
 from bop_toolkit_lib import config
@@ -58,12 +59,14 @@ parser.add_argument('--dataset', default=p['dataset'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
 parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--delta', default=p['delta'])
+parser.add_argument('--use_gt_depth', default=False, action='store_true')
 args = parser.parse_args()
 
 p['dataset'] = str(args.dataset)
 p['dataset_split'] = str(args.dataset_split)
 p['datasets_path'] = str(args.datasets_path)
 p['delta'] = float(args.delta)
+p['use_gt_depth'] = args.use_gt_depth
 
 
 if p['vis_visibility_masks']:
@@ -112,11 +115,15 @@ for scene_id in scene_ids:
           im_id))
 
     # Load depth image.
-    depth_fpath = dp_split['depth_tpath'].format(scene_id=scene_id, im_id=im_id)
+    if p["use_gt_depth"]:
+      depth_fpath = dp_split['gt_depth_tpath'].format(scene_id=scene_id, im_id=im_id)
+    else:
+      depth_fpath = dp_split['depth_tpath'].format(scene_id=scene_id, im_id=im_id)
     if not os.path.exists(depth_fpath):
       depth_fpath = depth_fpath.replace('.tif', '.png')
     depth = inout.load_depth(depth_fpath)
-    depth *= scene_camera[im_id]['depth_scale']  # Convert to [mm].
+    if not p["use_gt_depth"]:
+      depth *= scene_camera[im_id]['depth_scale']  # Convert to [mm].
 
     K = scene_camera[im_id]['cam_K']
     fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]

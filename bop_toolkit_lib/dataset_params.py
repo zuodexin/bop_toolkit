@@ -463,6 +463,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             "depth_tpath": join(
                 split_path, "{scene_id:06d}", "depth", "{im_id:06d}" + depth_ext
             ),
+            "gt_depth_tpath": join(
+                split_path, "{scene_id:06d}", "gt_depth", "{im_id:06d}" + depth_ext
+            ),
             # Path template to a mask of the full object silhouette.
             "mask_tpath": join(
                 split_path, "{scene_id:06d}", "mask", "{im_id:06d}_{gt_id:06d}.png"

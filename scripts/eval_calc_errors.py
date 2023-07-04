@@ -108,6 +108,8 @@ parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--targets_filename', default=p['targets_filename'])
 parser.add_argument('--out_errors_tpath', default=p['out_errors_tpath'])
+parser.add_argument('--visib_gt_min', default=0)
+
 args = parser.parse_args()
 
 p['n_top'] = int(args.n_top)
@@ -125,6 +127,7 @@ p['eval_path'] = str(args.eval_path)
 p['datasets_path'] = str(args.datasets_path)
 p['targets_filename'] = str(args.targets_filename)
 p['out_errors_tpath'] = str(args.out_errors_tpath)
+p['visib_gt_min'] = float(args.visib_gt_min)
 
 misc.log('-----------')
 misc.log('Parameters:')

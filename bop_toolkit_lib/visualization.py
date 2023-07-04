@@ -89,7 +89,8 @@ def depth_for_vis(depth, valid_start=0.2, valid_end=1.0):
 
 def vis_object_poses(
       poses, K, renderer, rgb=None, depth=None, vis_rgb_path=None,
-      vis_depth_diff_path=None, vis_rgb_resolve_visib=False, n_gt=-1):
+      vis_depth_diff_path=None, vis_rgb_resolve_visib=False, n_gt=-1, 
+      scene_id=-1, im_id=-1):
   """Visualizes 3D object models in specified poses in a single image.
 
   Two visualizations are created:
@@ -198,6 +199,12 @@ def vis_object_poses(
     size=11)
   ren_rgb_info = write_text_on_image(
     ren_rgb_info, [{'name': '#gt', 'val': n_gt, 'fmt': ':d'}], (0,11), color=(1.0, 1.0, 1.0),
+    size=11)
+  ren_rgb_info = write_text_on_image(
+    ren_rgb_info, [{'name': 'scene_id', 'val': scene_id, 'fmt': ':06d'}], (0,22), color=(1.0, 1.0, 1.0),
+    size=11)
+  ren_rgb_info = write_text_on_image(
+    ren_rgb_info, [{'name': 'im_id', 'val': im_id, 'fmt': ':06d'}], (0,33), color=(1.0, 1.0, 1.0),
     size=11)
 
   # Blend and save the RGB visualization.

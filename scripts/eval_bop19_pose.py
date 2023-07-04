@@ -100,6 +100,7 @@ parser.add_argument('--result_filenames',
 parser.add_argument('--results_path', default=p['results_path'])
 parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--targets_filename', default=p['targets_filename'])
+parser.add_argument('--visib_gt_min', default=0)
 args = parser.parse_args()
 
 p['renderer_type'] = str(args.renderer_type)
@@ -107,6 +108,7 @@ p['result_filenames'] = args.result_filenames.split(',')
 p['results_path'] = str(args.results_path)
 p['eval_path'] = str(args.eval_path)
 p['targets_filename'] = str(args.targets_filename)
+p['visib_gt_min'] = float(args.visib_gt_min)
 
 # Evaluation.
 # ------------------------------------------------------------------------------
@@ -165,6 +167,7 @@ for result_filename in p['result_filenames']:
       '--targets_filename={}'.format(p['targets_filename']),
       '--max_sym_disc_step={}'.format(p['max_sym_disc_step']),
       '--skip_missing=1',
+      '--visib_gt_min={}'.format(p['visib_gt_min']),
     ]
     if error['type'] == 'vsd':
       vsd_deltas_str = \

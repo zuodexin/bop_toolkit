@@ -31,7 +31,6 @@ from bop_toolkit_lib import misc
 from bop_toolkit_lib import pose_matching
 from bop_toolkit_lib import score
 
-
 # PARAMETERS (can be overwritten by the command line arguments below).
 ################################################################################
 p = {
@@ -265,6 +264,8 @@ for error_dir_path in p['error_dir_paths']:
   # Calculate the performance scores.
   # ----------------------------------------------------------------------------
   # 6D object localization scores (SiSo if n_top = 1).
+  if "scene_ids" not in dp_split:
+    dp_split['scene_ids'] = dataset_params.get_present_scene_ids(dp_split)
   scores = score.calc_localization_scores(
     dp_split['scene_ids'], dp_model['obj_ids'], matches, n_top)
 
