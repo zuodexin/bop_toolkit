@@ -183,6 +183,17 @@ def adi(R_est, t_est, R_gt, t_gt, pts):
   e = nn_dists.mean()
   return e
 
+def adi_discrete(R_est, t_est, R_gt, t_gt, pts, models_sym):
+  nn_dists = np.zeros(len(models_sym), dtype = np.float64)
+  for i, sym in enumerate(models_sym):
+    R_gt_sym = R_gt.dot(sym['R'])
+    t_gt_sym = R_gt.dot(sym['t']) + t_gt
+    pts_est = misc.transform_pts_Rt(pts, R_est, t_est)
+    pts_gt = misc.transform_pts_Rt(pts, R_gt_sym, t_gt_sym)
+    nn_dists[i] = np.linalg.norm(pts_est - pts_gt, axis=1).mean()
+  e = nn_dists.min()
+  return e
+
 
 def re(R_est, R_gt):
   """Rotational Error.

@@ -179,7 +179,7 @@ for result_filename in p['result_filenames']:
 
   # Get sets of symmetry transformations for the object models.
   models_sym = None
-  if p['error_type'] in ['mssd', 'mspd']:
+  if p['error_type'] in ['mssd', 'mspd', 'ad', 'add', 'adi']:
     models_sym = {}
     for obj_id in dp_model['obj_ids']:
       models_sym[obj_id] = misc.get_symmetry_transformations(
@@ -346,6 +346,8 @@ for result_filename in p['result_filenames']:
                   if obj_id in dp_model['symmetric_obj_ids']:
                     e = [pose_error.adi(
                       R_e, t_e, R_g, t_g, models[obj_id]['pts'])]
+                    # e = [pose_error.adi_discrete(
+                    #   R_e, t_e, R_g, t_g, models[obj_id]['pts'], models_sym[obj_id])]
                   else:
                     e = [pose_error.add(
                       R_e, t_e, R_g, t_g, models[obj_id]['pts'])]

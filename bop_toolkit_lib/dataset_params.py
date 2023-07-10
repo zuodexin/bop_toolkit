@@ -110,7 +110,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "hb": [6, 10, 11, 12, 13, 14, 18, 24, 29],
         "ycbv": [1, 13, 14, 16, 18, 19, 20, 21],
         "hope": None,  # Not defined yet.
-        "robi": [2, 4, 7],
+        "robi": [1, 2, 4, 7],
         "hw627_a": [1, 2, 3, 4],
         "hw627_b": [1, 2, 3, 4],
         "hw629": [],
