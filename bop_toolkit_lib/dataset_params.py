@@ -406,6 +406,11 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             ),
             # Path template to a file with GT annotations.
             "scene_gt_tpath": join(split_path, "{scene_id:06d}", "scene_gt.json"),
+            
+            # coarse gt
+            "scene_coarse_gt_tpath": join(split_path, "{scene_id:06d}", "scene_coarse_gt.json"),
+            "scene_coarse_ma_gt_tpath": join(split_path, "{scene_id:06d}", "scene_coarse_ma_gt.json"),
+            
             # Path template to a file with meta information about the GT annotations.
             "scene_gt_info_tpath": join(
                 split_path, "{scene_id:06d}", "scene_gt_info.json"

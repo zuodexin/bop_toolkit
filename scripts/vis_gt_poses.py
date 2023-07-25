@@ -76,6 +76,8 @@ parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--dataset', default=p['dataset'])
 parser.add_argument('--vis_path', default=p['vis_path'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
+parser.add_argument('--coarse_gt', action="store_true")
+parser.add_argument('--mask_available', action="store_true")
 args = parser.parse_args()
 
 p['dataset'] = args.dataset
@@ -109,7 +111,7 @@ else:
   scene_im_ids = None
 
 # List of considered scenes.
-scene_ids_curr = dp_split['scene_ids']
+scene_ids_curr = dataset_params.get_present_scene_ids(dp_split)
 if p['scene_ids']:
   scene_ids_curr = set(scene_ids_curr).intersection(p['scene_ids'])
 
@@ -142,8 +144,16 @@ for scene_id in scene_ids:
   # Load scene info and ground-truth poses.
   scene_camera = inout.load_scene_camera(
     dp_split['scene_camera_tpath'].format(scene_id=scene_id))
-  scene_gt = inout.load_scene_gt(
-    dp_split['scene_gt_tpath'].format(scene_id=scene_id))
+  if args.coarse_gt:
+    if args.mask_available:
+      scene_gt = inout.load_scene_gt(
+        dp_split['scene_coarse_ma_gt_tpath'].format(scene_id=scene_id))
+    else:
+      scene_gt = inout.load_scene_gt(
+        dp_split['scene_coarse_gt_tpath'].format(scene_id=scene_id))
+  else:
+    scene_gt = inout.load_scene_gt(
+      dp_split['scene_gt_tpath'].format(scene_id=scene_id))
 
   # List of considered images.
   if scene_im_ids is not None:
