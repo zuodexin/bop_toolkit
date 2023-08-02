@@ -89,10 +89,9 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "ycbv": list(range(1, 22)),
         "hope": list(range(1, 29)),
         "robi": list(range(1, 8)),
-        "hw627_a": list(range(1, 5)),
-        "hw627_b": list(range(1, 5)),
+        "hw627": list(range(1, 5)),
         "hw629": list(range(1, 4)),
-    }[dataset_name]
+    }[dataset_name.split("_")[0]]
 
     # ID's of objects with ambiguous views evaluated using the ADI pose error
     # function (the others are evaluated using ADD). See Hodan et al. (ECCVW'16).
@@ -111,10 +110,9 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "ycbv": [1, 13, 14, 16, 18, 19, 20, 21],
         "hope": None,  # Not defined yet.
         "robi": [1, 2, 4, 7],
-        "hw627_a": [1, 2, 3, 4],
-        "hw627_b": [1, 2, 3, 4],
+        "hw627": [1, 2, 3, 4],
         "hw629": [],
-    }[dataset_name]
+    }[dataset_name.split("_")[0]]
 
     # T-LESS includes two types of object models, CAD and reconstructed.
     # Use the CAD models as default.
@@ -370,11 +368,14 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             p["azimuth_range"] = None  # Not calculated yet.
             p["elev_range"] = None  # Not calculated yet.
 
-    elif dataset_name == "robi":
+    elif dataset_name[:4] == "robi":
         rgb_ext = ".png"
         # easy to mask mistake, use get_present_scene_ids instead
         # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
-        p["im_size"] = (1280, 720)
+        if dataset_name.split("_")[1] =="RealSense":
+            p["im_size"] = (1280, 720)
+        else:
+            p["im_size"] = (1280, 1024)
 
         if split == "test":
             p["depth_range"] = (346.31, 400)
