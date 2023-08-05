@@ -11,7 +11,7 @@ from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
 from bop_toolkit_lib import inout
 from bop_toolkit_lib import misc
-
+from bop_toolkit_lib.dataset_params import get_present_scene_ids
 
 # PARAMETERS.
 ################################################################################
@@ -46,7 +46,7 @@ p['datasets_path'] = str(args.datasets_path)
 dp_split = dataset_params.get_split_params(
   p['datasets_path'], p['dataset'], p['dataset_split'], p['dataset_split_type'])
 
-scene_ids = dp_split['scene_ids']
+scene_ids = get_present_scene_ids(dp_split)
 dists = []
 azimuths = []
 elevs = []
