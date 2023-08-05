@@ -152,7 +152,7 @@ for error_dir_path in p['error_dir_paths']:
   n_top = int(error_sign.split('_')[1].split('=')[1])
   result_info = os.path.basename(os.path.dirname(error_dir_path)).split('_')
   method = result_info[0]
-  dataset_info = result_info[1].split('-')
+  dataset_info = "_".join(result_info[1:]).split('-')
   dataset = dataset_info[0]
   split = dataset_info[1]
   split_type = dataset_info[2] if len(dataset_info) > 2 else None
