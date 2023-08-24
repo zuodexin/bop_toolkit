@@ -452,6 +452,24 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 f"{split}",
                 "{tag}_" + f"{dataset_name}-test.csv",
             ),
+            "detection_tpath": join(
+                datasets_path,
+                dataset_name,
+                "detection",
+                f"{split}",
+                "{scene_id:06d}",
+                "{tag}.json",
+            ),
+            "detection_vis_tpath": join(
+                datasets_path,
+                dataset_name,
+                "detection",
+                f"{split}",
+                "{scene_id:06d}",
+                "vis",
+                "{tag}",
+                "{im_id:06d}.jpg"
+            ),
             "vis_pred_path": join(
                 datasets_path,
                 dataset_name,
@@ -525,6 +543,7 @@ def get_present_scene_ids(dp_split):
     :param dp_split: Path to a folder with datasets.
     :return: List with scene ID's.
     """
+    assert os.path.isdir(dp_split["split_path"])
     scene_dirs = [
         d
         for d in glob.glob(os.path.join(dp_split["split_path"], "*"))
