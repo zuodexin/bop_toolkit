@@ -94,9 +94,11 @@ for result_fname in p['result_filenames']:
 
   # Parse info about the method and the dataset from the filename.
   result_name = os.path.splitext(os.path.basename(result_fname))[0]
-  result_info = result_name.split('_')
+  # 一级分割符:-
+  # 二级分隔符:_
+  result_info = result_name.split('-')
   method = result_info[0]
-  dataset_info = "_".join(result_info[1:]).split('-')
+  dataset_info = "-".join(result_info[1:]).split('_')
   dataset = dataset_info[0]
   split = dataset_info[1]
   split_type = dataset_info[2] if len(dataset_info) > 2 else None

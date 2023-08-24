@@ -150,9 +150,9 @@ for error_dir_path in p['error_dir_paths']:
   error_sign = os.path.basename(error_dir_path)
   err_type = str(error_sign.split('_')[0].split('=')[1])
   n_top = int(error_sign.split('_')[1].split('=')[1])
-  result_info = os.path.basename(os.path.dirname(error_dir_path)).split('_')
+  result_info = os.path.basename(os.path.dirname(error_dir_path)).split('-')
   method = result_info[0]
-  dataset_info = "_".join(result_info[1:]).split('-')
+  dataset_info = "-".join(result_info[1:]).split('_')
   dataset = dataset_info[0]
   split = dataset_info[1]
   split_type = dataset_info[2] if len(dataset_info) > 2 else None
