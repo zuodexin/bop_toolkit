@@ -433,6 +433,12 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "annotations",
                 f"gt_coco_{split}.json",
             ),
+            "coco_bop_src_tpath": join(
+                os.path.dirname(datasets_path),
+                "coco",
+                "annotations",
+                f"bop_src_{split}.json",
+            ),
             "pred_coco_tpath": join(
                 os.path.dirname(datasets_path),
                 "coco",
