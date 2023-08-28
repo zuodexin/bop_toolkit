@@ -376,6 +376,8 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
         if len(dataset_name.split("_"))==1 or dataset_name.split("_")[1] =="RealSense":
             p["im_size"] = (1280, 720)
+        elif dataset_name in ["robi_300_c"]:
+             p["im_size"] = (1280, 720)
         else:
             p["im_size"] = (1280, 1024)
 
@@ -450,7 +452,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 dataset_name,
                 "predictions",
                 f"{split}",
-                "{tag}_" + f"{dataset_name}-test.csv",
+                "{tag}-" + f"{dataset_name}-{split}.csv",
             ),
             "detection_tpath": join(
                 datasets_path,
@@ -468,7 +470,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{scene_id:06d}",
                 "vis",
                 "{tag}",
-                "{im_id:06d}.jpg"
+                "{im_id:06d}.png"
             ),
             "vis_pred_path": join(
                 datasets_path,
