@@ -148,9 +148,9 @@ for result_filename in p['result_filenames']:
   result_info = result_name.split('-')
   method = result_info[0]
   dataset_info = "-".join(result_info[1:]).split('_')
-  dataset = dataset_info[0]
-  split = dataset_info[1]
-  split_type = dataset_info[2] if len(dataset_info) > 2 else None
+  dataset = result_info[1]
+  split = result_info[2]
+  split_type = result_info[3] if len(result_info) > 3 else None
   split_type_str = ' - ' + split_type if split_type is not None else ''
 
   # Load dataset parameters.
