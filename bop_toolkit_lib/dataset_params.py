@@ -430,18 +430,21 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             "gt_coco_tpath": join(
                 os.path.dirname(datasets_path),
                 "coco",
+                f"{dataset_name}",
                 "annotations",
                 f"gt_coco_{split}.json",
             ),
             "coco_bop_src_tpath": join(
                 os.path.dirname(datasets_path),
                 "coco",
+                f"{dataset_name}",
                 "annotations",
                 f"bop_src_{split}.json",
             ),
             "pred_coco_tpath": join(
                 os.path.dirname(datasets_path),
                 "coco",
+                f"{dataset_name}",
                 "predictions",
                 "{tag}",
                 f"pred_coco_{split}.json",
@@ -449,6 +452,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             "vis_coco_tpath": join(
                 os.path.dirname(datasets_path),
                 "coco",
+                f"{dataset_name}",
                 "predictions",
                 "{tag}",
                 "vis/{im_id:06d}.png",
