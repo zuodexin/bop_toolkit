@@ -464,6 +464,13 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 f"{split}",
                 "{tag}-" + f"{dataset_name}-{split}.csv",
             ),
+            "pred_keypoints_tpath": join(
+                datasets_path,
+                dataset_name,
+                "pred_keypoints",
+                f"{split}",
+                "{tag}-" + f"{dataset_name}-{split}.json",
+            ),
             "detection_tpath": join(
                 datasets_path,
                 dataset_name,
