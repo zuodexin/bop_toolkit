@@ -141,7 +141,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         # obj file witch contains uv
         "model_obj_tpath": join(models_path, "obj_{obj_id:06d}.obj"),
         # Path to a file with meta information about the object models.
-        "keypoints_path": join(models_path, "keypoints.json"),
+        "keypoints_path": join(models_path, "keypoints-{method}-{num}.json"),
         
         "models_info_path": join(models_path, "models_info.json"),
     }
@@ -470,6 +470,16 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "pred_keypoints",
                 f"{split}",
                 "{tag}-" + f"{dataset_name}-{split}.json",
+            ),
+            "vis_pred_keypoint_tpath": join(
+                datasets_path,
+                dataset_name,
+                "pred_keypoints",
+                "vis",
+                "{tag}",
+                f"{split}",
+                "{scene_id:06d}",
+                "{im_id:06d}_{gt_id:06d}.png"
             ),
             "detection_tpath": join(
                 datasets_path,
