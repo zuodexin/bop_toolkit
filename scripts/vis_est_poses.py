@@ -3,6 +3,7 @@
 
 """Visualizes object models in pose estimates saved in the BOP format."""
 
+import math
 import argparse
 import os
 import numpy as np
@@ -65,6 +66,16 @@ p = {
     '{vis_path}', '{result_name}', '{scene_id:06d}',
     '{vis_name}_depth_diff.jpg'),
 
+  # Folder for the calculated pose errors and performance scores.
+  'error_type': 'ad',
+  
+  'eval_path': config.eval_path,
+  
+  # Template of path to the output file with calculated errors.
+  'out_errors_tpath': os.path.join(
+    '{eval_path}', '{result_name}', '{error_sign}',
+    'errors_{scene_id:06d}.json'),
+  
   'min_visib': -1,
 }
 ################################################################################
@@ -75,6 +86,8 @@ parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--vis_path', default=p['vis_path'])
 parser.add_argument('--n_top', default=p['n_top'], type=int)
 parser.add_argument('--min_visib', default=-1, type=float)
+parser.add_argument('--eval_path', default=p['eval_path'])
+parser.add_argument('--error_type', default=p['error_type'])
 args = parser.parse_args()
 
 p['result_filenames'] = args.result_filenames.split(',')
@@ -82,6 +95,8 @@ p['datasets_path'] = str(args.datasets_path)
 p['vis_path'] = str(args.vis_path)
 p['n_top'] = args.n_top
 p['min_visib'] = args.min_visib
+p['eval_path'] = str(args.eval_path)
+p['error_type'] = str(args.error_type)
 
 
 # Load colors.
@@ -102,6 +117,8 @@ for result_fname in p['result_filenames']:
   dataset = result_info[1]
   split = result_info[2]
   split_type = result_info[3] if len(result_info) > 3 else None
+  
+  error_sign = misc.get_error_signature(p['error_type'], p['n_top'])
 
   # Load dataset parameters.
   dp_split = dataset_params.get_split_params(
@@ -155,6 +172,27 @@ for result_fname in p['result_filenames']:
       dp_split['scene_gt_tpath'].format(scene_id=scene_id))
     gt_info = inout.load_scene_gt_info(dp_split["scene_gt_info_tpath"].format(scene_id=scene_id))
 
+    errors_path = p['out_errors_tpath'].format(
+          eval_path=p['eval_path'], result_name=result_name,
+          error_sign=error_sign, scene_id=scene_id)
+    scene_errs_ = inout.load_json(errors_path)
+    
+    scene_errs = {} # {im_id: obj_id: min_error}
+    for err in scene_errs_:
+      min_err = math.inf
+      match_gt_id = -1
+      for gt_id_, e in err["errors"].items():
+        if e[0] < min_err:
+          min_err = e[0]
+          match_gt_id = gt_id_
+      scene_errs.setdefault(err["im_id"], {})\
+        .setdefault(err["obj_id"], [])\
+        .append(dict(
+          match_gt_id = match_gt_id,
+          error = min_err,
+          est_id = err["est_id"],
+        ))
+
     for im_ind, (im_id, im_ests) in enumerate(scene_ests.items()):
 
       if im_ind % 10 == 0:
@@ -187,17 +225,24 @@ for result_fname in p['result_filenames']:
         obj_ests_sorted = obj_ests_sorted[slice(0, n_top_curr)]
 
         # Get list of poses to visualize.
-        for est in obj_ests_sorted:
+        for est_id, est in enumerate(obj_ests_sorted):
           est['obj_id'] = obj_id
+          err = scene_errs[im_id][obj_id][est_id]
 
           # Text info to write on the image at the pose estimate.
           if p['vis_per_obj_id']:
             est['text_info'] = [
-              {'name': '', 'val': est['score'], 'fmt': ':.2f'}
+              {'name': 'score', 'val': est['score'], 'fmt': ':.2f'},
+              {'name': 'error', 'val': err['error'], 'fmt': ':.2f'},
+              {'name': 'match_gt_id', 'val': err['match_gt_id'], 'fmt': ''},
             ]
           else:
             val = '{}:{:.2f}'.format(obj_id, est['score'])
-            est['text_info'] = [{'name': '', 'val': val, 'fmt': ''}]
+            est['text_info'] = [
+              {'name': 'score', 'val': val, 'fmt': ''},
+              {'name': 'error', 'val': err['error'], 'fmt': ':.2f'},
+              {'name': 'match_gt_id', 'val': err['match_gt_id'], 'fmt': ''},
+            ]
 
         im_ests_vis.append(obj_ests_sorted)
         im_ests_vis_obj_ids.append(obj_id)

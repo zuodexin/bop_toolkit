@@ -69,6 +69,7 @@ p = {
   'vis_depth_diff_tpath': os.path.join(
     '{vis_path}', '{dataset}', '{split}', '{scene_id:06d}',
     '{im_id:06d}_depth_diff.jpg'),
+  'min_visib': 0
 }
 ################################################################################
 parser = argparse.ArgumentParser()
@@ -78,12 +79,14 @@ parser.add_argument('--vis_path', default=p['vis_path'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
 parser.add_argument('--coarse_gt', action="store_true")
 parser.add_argument('--mask_available', action="store_true")
+parser.add_argument('--min_visib', default=-1, type=float)
 args = parser.parse_args()
 
 p['dataset'] = args.dataset
 p['datasets_path'] = str(args.datasets_path)
 p['vis_path'] = str(args.vis_path)
 p['dataset_split'] = str(args.dataset_split)
+p['min_visib'] = args.min_visib
 
 
 # Load dataset parameters.
@@ -153,7 +156,8 @@ for scene_id in scene_ids:
         dp_split['scene_coarse_gt_tpath'].format(scene_id=scene_id))
   else:
     scene_gt = inout.load_scene_gt(
-      dp_split['scene_gt_tpath'].format(scene_id=scene_id))
+      dp_split['scene_gt_tpath'].format(scene_id=scene_id))  
+  gt_info = inout.load_scene_gt_info(dp_split["scene_gt_info_tpath"].format(scene_id=scene_id))
 
   # List of considered images.
   if scene_im_ids is not None:
@@ -180,13 +184,16 @@ for scene_id in scene_ids:
     # Collect the ground-truth poses.
     gt_poses = []
     for gt_id in gt_ids_curr:
+      if gt_info[im_id][gt_id]["visib_fract"] < p['min_visib']:
+        continue
       gt = scene_gt[im_id][gt_id]
       gt_poses.append({
         'obj_id': gt['obj_id'],
         'R': gt['cam_R_m2c'],
         't': gt['cam_t_m2c'],
         'text_info': [
-          {'name': '', 'val': '{}:{}'.format(gt['obj_id'], gt_id), 'fmt': ''}
+          {'name': '', 'val': 'obj_id:{}'.format(gt['obj_id']), 'fmt': ''},
+          {'name': '', 'val': 'gt_id:{}'.format(gt_id), 'fmt': ''}
         ]
       })
 
