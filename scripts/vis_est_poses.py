@@ -88,6 +88,7 @@ parser.add_argument('--n_top', default=p['n_top'], type=int)
 parser.add_argument('--min_visib', default=-1, type=float)
 parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--error_types', default=p['error_types'], nargs='+')
+parser.add_argument('--text_size', default=11, type=int)
 args = parser.parse_args()
 
 p['result_filenames'] = args.result_filenames.split(',')
@@ -296,6 +297,6 @@ for result_fname in p['result_filenames']:
           poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
           vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
           vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt,
-          scene_id = scene_id, im_id = im_id)
+          scene_id = scene_id, im_id = im_id, text_size=args.text_size)
 
 misc.log('Done.')

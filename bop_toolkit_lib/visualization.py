@@ -90,7 +90,7 @@ def depth_for_vis(depth, valid_start=0.2, valid_end=1.0):
 def vis_object_poses(
       poses, K, renderer, rgb=None, depth=None, vis_rgb_path=None,
       vis_depth_diff_path=None, vis_rgb_resolve_visib=False, n_gt=-1, 
-      scene_id=-1, im_id=-1):
+      scene_id=-1, im_id=-1, text_size=11):
   """Visualizes 3D object models in specified poses in a single image.
 
   Two visualizations are created:
@@ -182,7 +182,6 @@ def vis_object_poses(
         # text_color = model_color
         bbox_color = (0.3, 0.3, 0.3)
         text_color = (1.0, 1.0, 1.0)
-        text_size = 11
 
         bbox = misc.calc_2d_bbox(xs, ys, im_size)
         im_size = (obj_mask.shape[1], obj_mask.shape[0])
