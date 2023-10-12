@@ -142,6 +142,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "model_obj_tpath": join(models_path, "obj_{obj_id:06d}.obj"),
         # Path to a file with meta information about the object models.
         "keypoints_path": join(models_path, "keypoints-{method}-{num}.json"),
+        "corr_points_path": join(models_path, "corr_points.json"),
         
         "models_info_path": join(models_path, "models_info.json"),
     }
