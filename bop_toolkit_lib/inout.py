@@ -216,6 +216,13 @@ def load_model_info(path):
       info["symmetries_discrete"] = np.array(info["symmetries_discrete"], np.floating)
   return model_info
 
+
+def save_model_info(model_info_path, model_info):
+  for obj_id, info in model_info.items():
+    if 'symmetries_discrete' in info.keys():
+      info["symmetries_discrete"] = info["symmetries_discrete"].tolist()
+  save_json(model_info_path, model_info)
+
 def save_scene_gt(path, scene_gt):
   """Saves ground-truth annotations to a JSON file.
 
