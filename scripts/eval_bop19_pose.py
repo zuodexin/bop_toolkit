@@ -41,11 +41,11 @@ p = {
     #   'vsd_normalized_by_diameter': True,
     #   'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     # },
-    # {
-    #   'n_top': -1,
-    #   'type': 'mssd',
-    #   'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
-    # },
+    {
+      'n_top': -1,
+      'type': 'mssd',
+      'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
+    },
     # {
     #   'n_top': -1,
     #   'type': 'mspd',
