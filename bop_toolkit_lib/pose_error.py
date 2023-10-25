@@ -212,6 +212,29 @@ def re(R_est, R_gt):
   error = 180.0 * error / np.pi  # Convert [rad] to [deg].
   return error
 
+def re_sym(R_est, R_gt, models_sym):
+  """Rotational Error.
+
+  :param R_est: 3x3 ndarray with the estimated rotation matrix.
+  :param R_gt: 3x3 ndarray with the ground-truth rotation matrix.
+  :param models_sym: nx4x4 ndarray with the symmetric discrete matrix.
+  :return: The calculated error.
+  """
+  assert (R_est.shape == R_gt.shape == (3, 3))
+  re_dists = np.zeros(len(models_sym), dtype = np.float64)
+  for i, sym in enumerate(models_sym):
+    R_gt_sym = R_gt.dot(sym['R'])
+    error_cos = float(0.5 * (np.trace(R_est.dot(np.linalg.inv(R_gt_sym))) - 1.0))
+
+    # Avoid invalid values due to numerical errors.
+    error_cos = min(1.0, max(-1.0, error_cos))
+
+    error = math.acos(error_cos)
+    error = 180.0 * error / np.pi  # Convert [rad] to [deg].
+    re_dists[i] = error
+  e = re_dists.min()
+  return e
+
 
 def te(t_est, t_gt):
   """Translational Error.

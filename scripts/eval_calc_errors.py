@@ -13,6 +13,7 @@ from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
 from bop_toolkit_lib import inout
 from bop_toolkit_lib import misc
+from bop_toolkit_lib.misc import farthest_point_sampling, random_sampling
 from bop_toolkit_lib import pose_error
 from bop_toolkit_lib import renderer
 
@@ -170,16 +171,19 @@ for result_filename in p['result_filenames']:
         dp_model['model_tpath'].format(obj_id=obj_id))
       print(dp_model['model_tpath'].format(obj_id=obj_id))
       print("number of points:", len(models[obj_id]['pts']))
+      if len(models[obj_id]['pts']) > 5000:
+        _, model_points = random_sampling(models[obj_id]['pts'], 5000)
+        _, models[obj_id]['pts'] = farthest_point_sampling(model_points, 1000)
 
   # Load models info.
   models_info = None
-  if p['error_type'] in ['ad', 'add', 'adi', 'vsd', 'mssd', 'mspd', 'cus']:
+  if p['error_type'] in ['ad', 'add', 'adi', 'vsd', 'mssd', 'mspd', 'cus', 're', 'rete']:
     models_info = inout.load_json(
       dp_model['models_info_path'], keys_to_int=True)
 
   # Get sets of symmetry transformations for the object models.
   models_sym = None
-  if p['error_type'] in ['mssd', 'mspd', 'ad', 'add', 'adi']:
+  if p['error_type'] in ['mssd', 'mspd', 'ad', 'add', 'adi', 're', 'rete']:
     models_sym = {}
     for obj_id in dp_model['obj_ids']:
       models_sym[obj_id] = misc.get_symmetry_transformations(
@@ -372,10 +376,10 @@ for result_filename in p['result_filenames']:
                 R_e, t_e, R_g, t_g, K, models[obj_id]['pts'])]
 
             elif p['error_type'] == 'rete':
-              e = [pose_error.re(R_e, R_g), pose_error.te(t_e, t_g)]
+              e = [pose_error.re_sym(R_e, R_g, models_sym[obj_id]), pose_error.te(t_e, t_g)]
 
             elif p['error_type'] == 're':
-              e = [pose_error.re(R_e, R_g)]
+              e = [pose_error.re_sym(R_e, R_g, models_sym[obj_id])]
 
             elif p['error_type'] == 'te':
               e = [pose_error.te(t_e, t_g)]

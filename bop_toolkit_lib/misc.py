@@ -397,3 +397,66 @@ def run_meshlab_script(meshlab_server_path, meshlab_script_path, model_in_path,
   log(' '.join(meshlabserver_cmd))
   if subprocess.call(meshlabserver_cmd) != 0:
     exit(-1)
+
+
+def farthest_point_sampling_(points, n_samples, dist_mat=None):
+    """Farthest point sampling."""
+    sampled_idx = np.zeros((n_samples,), dtype=int)
+    if dist_mat is None:
+        dist_mat = pairwise_distance(points, points)
+    # start from first point
+    pt_idx = 0
+    dist_to_set = dist_mat[:, pt_idx]
+    for i in range(n_samples):
+        sampled_idx[i] = pt_idx
+        dist_to_set = np.minimum(dist_to_set, dist_mat[:, pt_idx])
+        pt_idx = np.argmax(dist_to_set)
+    sampled_pts = points[sampled_idx]
+    return sampled_idx, sampled_pts
+
+
+def pairwise_distance(A, B):
+    """Compute pairwise distance of two point clouds.point
+
+    Args:
+        A: n x 3 numpy array
+        B: m x 3 numpy array
+
+    Return:
+        C: n x m numpy array
+
+    """
+    diff = A[:, :, None] - B[:, :, None].T
+    C = np.sqrt(np.sum(diff**2, axis=1))
+
+    return C
+
+def farthest_point_sampling(points, n_samples, dist_mat=None, start="none"):
+    """Farthest point sampling."""
+    if start == "center":
+        center = np.mean(points, 0, keepdims=True)
+        points = np.concatenate([center, points], 0)
+        sampled_idx, sampled_pts = farthest_point_sampling_(
+            points, n_samples + 1, dist_mat
+        )
+        # exclude center
+        sampled_idx = sampled_idx[1:] - 1
+        sampled_pts = sampled_pts[1:]
+    else:
+        sampled_idx, sampled_pts = farthest_point_sampling_(points, n_samples, dist_mat)
+    return sampled_idx, sampled_pts
+
+
+def random_sampling(point_cloud, num_points):
+    """
+    从点云中随机采样若干个点
+    Args:
+        point_cloud: 点云数据，N行3列的NumPy数组，每行代表一个点的XYZ坐标
+        num_points: 需要采样的点的数量
+    Returns:
+        sampled_points: 采样得到的点云数据，M行3列的NumPy数组，每行代表一个采样点的XYZ坐标
+    """
+    num_total_points = point_cloud.shape[0]
+    indices = np.random.choice(num_total_points, num_points, replace=True)
+    sampled_points = point_cloud[indices, :]
+    return indices, sampled_points
