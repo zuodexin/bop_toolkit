@@ -531,7 +531,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 split_path, "{scene_id:06d}", "rgb_amodal", "{im_id:06d}_{gt_id:06d}" + rgb_ext
             ),
             "nocs_tpath": join(
-                split_path, "{scene_id:06d}", "nocs", "{im_id:06d}" + rgb_ext
+                split_path, "{scene_id:06d}", "nocs", "{im_id:06d}.png"
             ),
             # Path template to a depth image.
             "depth_tpath": join(
