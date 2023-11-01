@@ -40,7 +40,7 @@ def ensure_dir(path):
     os.makedirs(path)
 
 
-def get_symmetry_transformations(model_info, max_sym_disc_step):
+def get_symmetry_transformations(model_info, max_sym_disc_step, format="rt"):
   """Returns a set of symmetry transformations for an object model.
 
   :param model_info: See files models_info.json provided with the datasets.
@@ -86,8 +86,19 @@ def get_symmetry_transformations(model_info, max_sym_disc_step):
         trans.append({'R': R, 't': t})
     else:
       trans.append(tran_disc)
-
-  return trans
+  
+  
+  if format == "TCO":
+    ret_trans = []
+    for tran in trans:
+      TCO = np.eye(4)
+      TCO[:3, :3] = tran["R"]
+      TCO[:3, 3] = tran["t"].reshape(3)
+      ret_trans.append(TCO)
+    ret_trans = np.stack(ret_trans,0)
+  else:
+    ret_trans = trans
+  return ret_trans
 
 
 def project_pts(pts, K, R, t):
