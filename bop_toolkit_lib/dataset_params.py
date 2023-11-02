@@ -143,7 +143,6 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         # Path to a file with meta information about the object models.
         "keypoints_path": join(models_path, "keypoints-{method}-{num}.json"),
         "corr_points_path": join(models_path, "corr_points.json"),
-        
         "models_info_path": join(models_path, "models_info.json"),
     }
 
@@ -375,10 +374,13 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         rgb_ext = ".png"
         # easy to mask mistake, use get_present_scene_ids instead
         # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
-        if len(dataset_name.split("_"))==1 or dataset_name.split("_")[1] =="RealSense":
+        if (
+            len(dataset_name.split("_")) == 1
+            or dataset_name.split("_")[1] == "RealSense"
+        ):
             p["im_size"] = (1280, 720)
         elif dataset_name in ["robi_300_c"]:
-             p["im_size"] = (1280, 720)
+            p["im_size"] = (1280, 720)
         else:
             p["im_size"] = (1280, 1024)
 
@@ -412,11 +414,13 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             ),
             # Path template to a file with GT annotations.
             "scene_gt_tpath": join(split_path, "{scene_id:06d}", "scene_gt.json"),
-            
             # coarse gt
-            "scene_coarse_gt_tpath": join(split_path, "{scene_id:06d}", "scene_coarse_gt.json"),
-            "scene_coarse_ma_gt_tpath": join(split_path, "{scene_id:06d}", "scene_coarse_ma_gt.json"),
-            
+            "scene_coarse_gt_tpath": join(
+                split_path, "{scene_id:06d}", "scene_coarse_gt.json"
+            ),
+            "scene_coarse_ma_gt_tpath": join(
+                split_path, "{scene_id:06d}", "scene_coarse_ma_gt.json"
+            ),
             # Path template to a file with meta information about the GT annotations.
             "scene_gt_info_tpath": join(
                 split_path, "{scene_id:06d}", "scene_gt_info.json"
@@ -480,7 +484,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{tag}",
                 f"{split}",
                 "{scene_id:06d}",
-                "{im_id:06d}_{gt_id:06d}.png"
+                "{im_id:06d}_{gt_id:06d}.png",
             ),
             "detection_tpath": join(
                 datasets_path,
@@ -510,7 +514,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 f"{split}",
                 "{scene_id:06d}",
                 "vis",
-                "{im_id:06d}.png"
+                "{im_id:06d}.png",
             ),
             "vis_pred_path": join(
                 datasets_path,
@@ -528,17 +532,21 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 split_path, "{scene_id:06d}", "rgb", "{im_id:06d}" + rgb_ext
             ),
             "rgb_amodal_tpath": join(
-                split_path, "{scene_id:06d}", "rgb_amodal", "{im_id:06d}_{gt_id:06d}" + rgb_ext
+                split_path,
+                "{scene_id:06d}",
+                "rgb_amodal",
+                "{im_id:06d}_{gt_id:06d}" + rgb_ext,
             ),
-            "nocs_tpath": join(
-                split_path, "{scene_id:06d}", "nocs", "{im_id:06d}.png"
-            ),
+            "nocs_tpath": join(split_path, "{scene_id:06d}", "nocs", "{im_id:06d}.png"),
             # Path template to a depth image.
             "depth_tpath": join(
                 split_path, "{scene_id:06d}", "depth", "{im_id:06d}" + depth_ext
             ),
             "depth_amodal_tpath": join(
-                split_path, "{scene_id:06d}", "depth_amodal", "{im_id:06d}_{gt_id:06d}" + depth_ext
+                split_path,
+                "{scene_id:06d}",
+                "depth_amodal",
+                "{im_id:06d}_{gt_id:06d}" + depth_ext,
             ),
             "gt_depth_tpath": join(
                 split_path, "{scene_id:06d}", "gt_depth", "{im_id:06d}" + depth_ext
@@ -597,3 +605,12 @@ def get_present_scene_ids(dp_split):
     scene_ids = [int(os.path.basename(scene_dir)) for scene_dir in scene_dirs]
     scene_ids = sorted(scene_ids)
     return scene_ids
+
+
+def get_present_im_ids(dp_split, scene_id, find_by="depth_tpath"):
+    parent_dir = os.path.dirname(dp_split[find_by].format(scene_id=scene_id, im_id=0))
+    im_ids = [
+        int(os.path.splitext(os.path.basename(d))[0])
+        for d in glob.glob(os.path.join(parent_dir, "*"))
+    ]
+    return im_ids
