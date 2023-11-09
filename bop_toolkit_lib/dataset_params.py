@@ -495,6 +495,12 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{scene_id:06d}",
                 "boxes.json",
             ),
+            "segmentation_tpath": join(
+                datasets_path,
+                dataset_name,
+                "segmentstions",
+                f"{dataset_name}-{split}-"+"{tag}"+f".json",
+            ),
             "detection_mask_tpath": join(
                 datasets_path,
                 dataset_name,
