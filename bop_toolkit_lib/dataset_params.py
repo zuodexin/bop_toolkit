@@ -489,17 +489,14 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             "detection_tpath": join(
                 datasets_path,
                 dataset_name,
-                "detection",
-                "{tag}",
-                f"{split}",
-                "{scene_id:06d}",
-                "boxes.json",
+                "detections",
+                f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
             ),
             "segmentation_tpath": join(
                 datasets_path,
                 dataset_name,
                 "segmentstions",
-                f"{dataset_name}-{split}-"+"{tag}"+f".json",
+                f"{dataset_name}-{split}-" + "{tag}" + f".json",
             ),
             "detection_mask_tpath": join(
                 datasets_path,
@@ -515,11 +512,10 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             "detection_vis_tpath": join(
                 datasets_path,
                 dataset_name,
-                "detection",
-                "{tag}",
-                f"{split}",
-                "{scene_id:06d}",
+                "detections",
                 "vis",
+                f"{dataset_name}-{split}-" + "{tag}",
+                "{scene_id:06d}",
                 "{im_id:06d}.png",
             ),
             "vis_pred_path": join(
@@ -544,7 +540,12 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{im_id:06d}_{gt_id:06d}" + rgb_ext,
             ),
             "nocs_tpath": join(split_path, "{scene_id:06d}", "nocs", "{im_id:06d}.png"),
-            "nocs_amodal_tpath": join(split_path, "{scene_id:06d}", "nocs_amodal", "{im_id:06d}_{gt_id:06d}.png"),
+            "nocs_amodal_tpath": join(
+                split_path,
+                "{scene_id:06d}",
+                "nocs_amodal",
+                "{im_id:06d}_{gt_id:06d}.png",
+            ),
             # Path template to a depth image.
             "depth_tpath": join(
                 split_path, "{scene_id:06d}", "depth", "{im_id:06d}" + depth_ext
