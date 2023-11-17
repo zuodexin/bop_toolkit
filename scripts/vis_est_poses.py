@@ -239,10 +239,13 @@ for result_fname in p['result_filenames']:
               {'name': 'score', 'val': val, 'fmt': ''},
             ]
           for error_type in p['error_types']:
-            if im_id in scene_errs[error_type]:
-              err = scene_errs[error_type][im_id][obj_id][est_id]
-              est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
-              est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''},)
+            if error_type in scene_errs:
+              if im_id in scene_errs[error_type]:
+                if obj_id in scene_errs[error_type][im_id]:
+                  if est_id in scene_errs[error_type][im_id][obj_id]:
+                    err = scene_errs[error_type][im_id][obj_id][est_id]
+                    est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
+                    est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''},)
 
         im_ests_vis.append(obj_ests_sorted)
         im_ests_vis_obj_ids.append(obj_id)
