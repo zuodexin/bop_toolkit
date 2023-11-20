@@ -46,11 +46,11 @@ p = {
       'type': 'mssd',
       'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     },
-    # {
-    #   'n_top': -1,
-    #   'type': 'mspd',
-    #   'correct_th': [[th] for th in np.arange(5, 51, 5)]
-    # },
+    {
+      'n_top': -1,
+      'type': 'mspd',
+      'correct_th': [[th] for th in np.arange(5, 51, 5)]
+    },
     {
       'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
       'type': 'ad',
