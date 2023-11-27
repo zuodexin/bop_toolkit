@@ -4,7 +4,7 @@
 """Visualization utilities."""
 
 import os
-# import cv2
+import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
@@ -192,6 +192,8 @@ def vis_object_poses(
           ren_rgb_info = write_text_on_image(
             ren_rgb_info, pose['text_info'], text_loc, color=text_color,
             size=text_size)
+      # Draw axis
+      ren_rgb = draw_axis(ren_rgb, pose['R'], pose['t'], K)
   
   ren_rgb_info = write_text_on_image(
     ren_rgb_info, [{'name': '#detections', 'val': len(poses), 'fmt': ':d'}], (0,0), color=(1.0, 1.0, 1.0),
@@ -246,3 +248,16 @@ def vis_object_poses(
     ]
     depth_diff_vis = write_text_on_image(depth_diff_vis, depth_info)
     inout.save_im(vis_depth_diff_path, depth_diff_vis)
+
+
+def draw_axis(img, R, t, K, length=30):
+    # unit is mm
+    rotV, _ = cv2.Rodrigues(R)
+    points = np.float32([[length, 0, 0], [0, length, 0], [0, 0, length], [0, 0, 0]]).reshape(-1, 3)
+    axisPoints, _ = cv2.projectPoints(points, rotV, t, K, (0, 0, 0, 0))
+    axisPoints = axisPoints.astype(np.int32)
+    # print(rotV.shape, axisPoints.shape, t.shape, R.shape, K.shape)
+    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255,0,0), 3)
+    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0,255,0), 3)
+    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0,0,255), 3)
+    return img

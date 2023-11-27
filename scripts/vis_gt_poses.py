@@ -80,6 +80,7 @@ parser.add_argument('--dataset_split', default=p['dataset_split'])
 parser.add_argument('--coarse_gt', action="store_true")
 parser.add_argument('--mask_available', action="store_true")
 parser.add_argument('--min_visib', default=-1, type=float)
+parser.add_argument('--text_size', default=11, type=int)
 args = parser.parse_args()
 
 p['dataset'] = args.dataset
@@ -87,6 +88,7 @@ p['datasets_path'] = str(args.datasets_path)
 p['vis_path'] = str(args.vis_path)
 p['dataset_split'] = str(args.dataset_split)
 p['min_visib'] = args.min_visib
+p['text_size'] = args.text_size
 
 
 # Load dataset parameters.
@@ -234,6 +236,7 @@ for scene_id in scene_ids:
     visualization.vis_object_poses(
       poses=gt_poses, K=K, renderer=ren, rgb=rgb, depth=depth,
       vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
-      vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'])
+      vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'],
+      text_size=p["text_size"])
 
 misc.log('Done.')
