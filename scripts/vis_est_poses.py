@@ -22,7 +22,7 @@ from bop_toolkit_lib import visualization
 p = {
   # Top N pose estimates (with the highest score) to be visualized for each
   # object in each image.
-  'n_top': 1,  # 0 = all estimates, -1 = given by the number of GT poses.
+  'n_top': 0,  # 0 = all estimates, -1 = given by the number of GT poses.
 
   # True = one visualization for each (im_id, obj_id), False = one per im_id.
   'vis_per_obj_id': True,
@@ -67,7 +67,7 @@ p = {
     '{vis_name}_depth_diff.jpg'),
 
   # Folder for the calculated pose errors and performance scores.
-  'error_types': ['ad', 're', 'te', 'rete'],
+  'error_types': ['ad', 're', 'te', 'mssd'],
   
   'eval_path': config.eval_path,
   
@@ -242,10 +242,9 @@ for result_fname in p['result_filenames']:
             if error_type in scene_errs:
               if im_id in scene_errs[error_type]:
                 if obj_id in scene_errs[error_type][im_id]:
-                  if est_id in scene_errs[error_type][im_id][obj_id]:
                     err = scene_errs[error_type][im_id][obj_id][est_id]
                     est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
-                    est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''},)
+                    est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''})
 
         im_ests_vis.append(obj_ests_sorted)
         im_ests_vis_obj_ids.append(obj_id)

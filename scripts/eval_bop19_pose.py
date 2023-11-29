@@ -42,12 +42,12 @@ p = {
     #   'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     # },
     {
-      'n_top': -1,
+      'n_top': 0,
       'type': 'mssd',
       'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     },
     {
-      'n_top': -1,
+      'n_top': 0,
       'type': 'mspd',
       'correct_th': [[th] for th in np.arange(5, 51, 5)]
     },
