@@ -91,6 +91,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "robi": list(range(1, 8)),
         "hw627": list(range(1, 5)),
         "hw629": list(range(1, 4)),
+        "pnpsphere": list(range(1, 2)),
     }[dataset_name.split("_")[0]]
 
     # ID's of objects with ambiguous views evaluated using the ADI pose error
@@ -112,6 +113,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         "robi": [1, 2, 4, 7],
         "hw627": [1, 2, 3, 4],
         "hw629": [],
+        "pnpsphere": [1],
     }[dataset_name.split("_")[0]]
 
     # T-LESS includes two types of object models, CAD and reconstructed.
@@ -388,6 +390,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             p["depth_range"] = (346.31, 400)
             p["azimuth_range"] = (0, 2 * math.pi)
             p["elev_range"] = (-math.pi, math.pi)
+    elif dataset_name[:9] == "pnpsphere":
+        rgb_ext = ".png"
+        p["im_size"] = (640, 480)
     elif dataset_name[:5] == "hw627":
         rgb_ext = ".png"
         p["im_size"] = (320, 240)
@@ -411,6 +416,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             # Path template to a file with per-image camera parameters.
             "scene_camera_tpath": join(
                 split_path, "{scene_id:06d}", "scene_camera.json"
+            ),
+            "camera_tpath": join(
+                base_path, "camera" + (f"_{split}" if split_type else "") + ".json"
             ),
             # Path template to a file with GT annotations.
             "scene_gt_tpath": join(split_path, "{scene_id:06d}", "scene_gt.json"),
