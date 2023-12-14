@@ -500,6 +500,18 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "detections",
                 f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
             ),
+            "gpose_detection_tpath": join(
+                datasets_path,
+                dataset_name,
+                "gpose_detections",
+                f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
+            ),
+            "coco_detection_tpath": join(
+                datasets_path,
+                dataset_name,
+                "coco_detections",
+                f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
+            ),
             "segmentation_tpath": join(
                 datasets_path,
                 dataset_name,
