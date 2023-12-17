@@ -42,32 +42,32 @@ p = {
     #   'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     # },
     {
-      'n_top': 0,
+      'n_top': -1,
       'type': 'mssd',
       'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
     },
     {
-      'n_top': 0,
+      'n_top': -1,
       'type': 'mspd',
       'correct_th': [[th] for th in np.arange(5, 51, 5)]
     },
     {
-      'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
       'type': 'ad',
       'correct_th': [[0.1]]
     },
     {
-      'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
       'type': 'rete',
       'correct_th': [[5.0, 5.0]]
     },
     {
-      'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
       'type': 're',
       'correct_th': [[th] for th in np.arange(5, 21, 5)]
     },
     {
-      'n_top': 0, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
       'type': 'te',
       'correct_th': [[th] for th in np.arange(5, 11, 5)]
     },
