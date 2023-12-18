@@ -8,6 +8,7 @@ import argparse
 import os
 import numpy as np
 import itertools
+from loguru import logger
 
 from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
@@ -80,226 +81,233 @@ p = {
 }
 ################################################################################
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--result_filenames', default=p['result_filenames'])
-parser.add_argument('--datasets_path', default=p['datasets_path'])
-parser.add_argument('--vis_path', default=p['vis_path'])
-parser.add_argument('--n_top', default=p['n_top'], type=int)
-parser.add_argument('--min_visib', default=-1, type=float)
-parser.add_argument('--eval_path', default=p['eval_path'])
-parser.add_argument('--error_types', default=p['error_types'], nargs='+')
-parser.add_argument('--text_size', default=11, type=int)
-args = parser.parse_args()
+@logger.catch
+def main():
 
-p['result_filenames'] = args.result_filenames.split(',')
-p['datasets_path'] = str(args.datasets_path)
-p['vis_path'] = str(args.vis_path)
-p['n_top'] = args.n_top
-p['min_visib'] = args.min_visib
-p['eval_path'] = str(args.eval_path)
-p['error_types'] = args.error_types
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--result_filenames', default=p['result_filenames'])
+  parser.add_argument('--datasets_path', default=p['datasets_path'])
+  parser.add_argument('--vis_path', default=p['vis_path'])
+  parser.add_argument('--n_top', default=p['n_top'], type=int)
+  parser.add_argument('--min_visib', default=-1, type=float)
+  parser.add_argument('--eval_path', default=p['eval_path'])
+  parser.add_argument('--error_types', default=p['error_types'], nargs='+')
+  parser.add_argument('--text_size', default=11, type=int)
+  args = parser.parse_args()
 
-# Load colors.
-colors_path = os.path.join(
-  os.path.dirname(visualization.__file__), 'colors.json')
-colors = inout.load_json(colors_path)
+  p['result_filenames'] = args.result_filenames.split(',')
+  p['datasets_path'] = str(args.datasets_path)
+  p['vis_path'] = str(args.vis_path)
+  p['n_top'] = args.n_top
+  p['min_visib'] = args.min_visib
+  p['eval_path'] = str(args.eval_path)
+  p['error_types'] = args.error_types
 
-for result_fname in p['result_filenames']:
-  misc.log('Processing: ' + result_fname)
+  # Load colors.
+  colors_path = os.path.join(
+    os.path.dirname(visualization.__file__), 'colors.json')
+  colors = inout.load_json(colors_path)
 
-  # Parse info about the method and the dataset from the filename.
-  result_name = os.path.splitext(os.path.basename(result_fname))[0]
-  # 一级分割符:-
-  # 二级分隔符:_
-  result_info = result_name.split('-')
-  method = result_info[0]
-  dataset_info = "-".join(result_info[1:]).split('_')
-  dataset = result_info[1]
-  split = result_info[2]
-  split_type = result_info[3] if len(result_info) > 3 else None
+  for result_fname in p['result_filenames']:
+    misc.log('Processing: ' + result_fname)
 
-  # Load dataset parameters.
-  dp_split = dataset_params.get_split_params(
-    p['datasets_path'], dataset, split, split_type)
+    # Parse info about the method and the dataset from the filename.
+    result_name = os.path.splitext(os.path.basename(result_fname))[0]
+    # 一级分割符:-
+    # 二级分隔符:_
+    result_info = result_name.split('-')
+    method = result_info[0]
+    dataset_info = "-".join(result_info[1:]).split('_')
+    dataset = result_info[1]
+    split = result_info[2]
+    split_type = result_info[3] if len(result_info) > 3 else None
 
-  model_type = 'eval'
-  dp_model = dataset_params.get_model_params(
-    p['datasets_path'], dataset, model_type)
+    # Load dataset parameters.
+    dp_split = dataset_params.get_split_params(
+      p['datasets_path'], dataset, split, split_type)
 
-  # Rendering mode.
-  renderer_modalities = []
-  if p['vis_rgb']:
-    renderer_modalities.append('rgb')
-  if p['vis_depth_diff'] or (p['vis_rgb'] and p['vis_rgb_resolve_visib']):
-    renderer_modalities.append('depth')
-  renderer_mode = '+'.join(renderer_modalities)
+    model_type = 'eval'
+    dp_model = dataset_params.get_model_params(
+      p['datasets_path'], dataset, model_type)
 
-  # Create a renderer.
-  width, height = dp_split['im_size']
-  ren = renderer.create_renderer(
-    width, height, p['renderer_type'], mode=renderer_mode, shading="flat")
+    # Rendering mode.
+    renderer_modalities = []
+    if p['vis_rgb']:
+      renderer_modalities.append('rgb')
+    if p['vis_depth_diff'] or (p['vis_rgb'] and p['vis_rgb_resolve_visib']):
+      renderer_modalities.append('depth')
+    renderer_mode = '+'.join(renderer_modalities)
 
-  # Load object models.
-  models = {}
-  for obj_id in dp_model['obj_ids']:
-    misc.log('Loading 3D model of object {}...'.format(obj_id))
-    model_path = dp_model['model_tpath'].format(obj_id=obj_id)
-    model_color = None
-    if not p['vis_orig_color']:
-      model_color = tuple(colors[(obj_id - 1) % len(colors)])
-    ren.add_object(obj_id, model_path, surf_color=model_color)
+    # Create a renderer.
+    width, height = dp_split['im_size']
+    ren = renderer.create_renderer(
+      width, height, p['renderer_type'], mode=renderer_mode, shading="flat")
 
-  # Load pose estimates.
-  misc.log('Loading pose estimates...')
-  ests = inout.load_bop_results(
-    os.path.join(result_fname))
+    # Load object models.
+    models = {}
+    for obj_id in dp_model['obj_ids']:
+      misc.log('Loading 3D model of object {}...'.format(obj_id))
+      model_path = dp_model['model_tpath'].format(obj_id=obj_id)
+      model_color = None
+      if not p['vis_orig_color']:
+        model_color = tuple(colors[(obj_id - 1) % len(colors)])
+      ren.add_object(obj_id, model_path, surf_color=model_color)
 
-  # Organize the pose estimates by scene, image and object.
-  misc.log('Organizing pose estimates...')
-  ests_org = {}
-  for est in ests:
-    ests_org.setdefault(est['scene_id'], {}).setdefault(
-      est['im_id'], {}).setdefault(est['obj_id'], []).append(est)
+    # Load pose estimates.
+    misc.log('Loading pose estimates...')
+    ests = inout.load_bop_results(
+      os.path.join(result_fname))
 
-  for scene_id, scene_ests in ests_org.items():
+    # Organize the pose estimates by scene, image and object.
+    misc.log('Organizing pose estimates...')
+    ests_org = {}
+    for est in ests:
+      ests_org.setdefault(est['scene_id'], {}).setdefault(
+        est['im_id'], {}).setdefault(est['obj_id'], []).append(est)
 
-    # Load info and ground-truth poses for the current scene.
-    scene_camera = inout.load_scene_camera(
-      dp_split['scene_camera_tpath'].format(scene_id=scene_id))
-    scene_gt = inout.load_scene_gt(
-      dp_split['scene_gt_tpath'].format(scene_id=scene_id))
-    gt_info = inout.load_scene_gt_info(dp_split["scene_gt_info_tpath"].format(scene_id=scene_id))
+    for scene_id, scene_ests in ests_org.items():
 
-    scene_errs = {} # {error_type: {im_id: obj_id: min_error}}
-    for error_type in p['error_types']:
-      error_sign = misc.get_error_signature(error_type, p['n_top'])
-      errors_path = p['out_errors_tpath'].format(
-            eval_path=p['eval_path'], result_name=result_name,
-            error_sign=error_sign, scene_id=scene_id)
-      scene_errs_ = inout.load_json(errors_path)
-      for err in scene_errs_:
-        min_err = math.inf
-        match_gt_id = -1
-        for gt_id_, e in err["errors"].items():
-          if e[0] < min_err:
-            min_err = e[0]
-            match_gt_id = gt_id_
-        scene_errs.setdefault(error_type, {})\
-          .setdefault(err["im_id"], {})\
-          .setdefault(err["obj_id"], [])\
-          .append(dict(
-            match_gt_id = match_gt_id,
-            error = min_err,
-            est_id = err["est_id"],
-          ))
+      # Load info and ground-truth poses for the current scene.
+      scene_camera = inout.load_scene_camera(
+        dp_split['scene_camera_tpath'].format(scene_id=scene_id))
+      scene_gt = inout.load_scene_gt(
+        dp_split['scene_gt_tpath'].format(scene_id=scene_id))
+      gt_info = inout.load_scene_gt_info(dp_split["scene_gt_info_tpath"].format(scene_id=scene_id))
 
-    for im_ind, (im_id, im_ests) in enumerate(scene_ests.items()):
+      scene_errs = {} # {error_type: {im_id: obj_id: min_error}}
+      for error_type in p['error_types']:
+        error_sign = misc.get_error_signature(error_type, p['n_top'])
+        errors_path = p['out_errors_tpath'].format(
+              eval_path=p['eval_path'], result_name=result_name,
+              error_sign=error_sign, scene_id=scene_id)
+        scene_errs_ = inout.load_json(errors_path)
+        for err in scene_errs_:
+          min_err = math.inf
+          match_gt_id = -1
+          for gt_id_, e in err["errors"].items():
+            if e[0] < min_err:
+              min_err = e[0]
+              match_gt_id = gt_id_
+          scene_errs.setdefault(error_type, {})\
+            .setdefault(err["im_id"], {})\
+            .setdefault(err["obj_id"], {})\
+            .setdefault(err["est_id"], dict(
+              match_gt_id = match_gt_id,
+              error = min_err,
+              est_id = err["est_id"],
+            ))
 
-      if im_ind % 10 == 0:
-        split_type_str = ' - ' + split_type if split_type is not None else ''
-        misc.log(
-          'Visualizing pose estimates - method: {}, dataset: {}{}, scene: {}, '
-          'im: {}'.format(method, dataset, split_type_str, scene_id, im_id))
+      for im_ind, (im_id, im_ests) in enumerate(scene_ests.items()):
 
-      # Intrinsic camera matrix.
-      K = scene_camera[im_id]['cam_K']
+        if im_ind % 10 == 0:
+          split_type_str = ' - ' + split_type if split_type is not None else ''
+          misc.log(
+            'Visualizing pose estimates - method: {}, dataset: {}{}, scene: {}, '
+            'im: {}'.format(method, dataset, split_type_str, scene_id, im_id))
 
-      im_ests_vis = []
-      im_ests_vis_obj_ids = []
-      for obj_id, obj_ests in im_ests.items():
+        # Intrinsic camera matrix.
+        K = scene_camera[im_id]['cam_K']
 
-        # Sort the estimates by score (in descending order).
-        obj_ests_sorted = sorted(
-          obj_ests, key=lambda est: est['score'], reverse=True)
+        im_ests_vis = []
+        im_ests_vis_obj_ids = []
+        for obj_id, obj_ests in im_ests.items():
 
-        n_gt = sum([inst_gt['obj_id'] == obj_id and gt_info[im_id][gt_id]["visib_fract"] > p['min_visib']
-                    for gt_id, inst_gt in enumerate(scene_gt[im_id])])
+          # Sort the estimates by score (in descending order).
+          obj_ests_sorted = sorted(
+            obj_ests, key=lambda est: est['score'], reverse=True)
 
-        # Select the number of top estimated poses to visualize.
-        if p['n_top'] == 0:  # All estimates are considered.
-          n_top_curr = None
-        elif p['n_top'] == -1:  # Given by the number of GT poses.
-          n_top_curr = n_gt
-        else:  # Specified by the parameter n_top.
-          n_top_curr = p['n_top']
-        obj_ests_sorted = obj_ests_sorted[slice(0, n_top_curr)]
+          n_gt = sum([inst_gt['obj_id'] == obj_id and gt_info[im_id][gt_id]["visib_fract"] > p['min_visib']
+                      for gt_id, inst_gt in enumerate(scene_gt[im_id])])
 
-        # Get list of poses to visualize.
-        for est_id, est in enumerate(obj_ests_sorted):
-          est['obj_id'] = obj_id
+          # Select the number of top estimated poses to visualize.
+          if p['n_top'] == 0:  # All estimates are considered.
+            n_top_curr = None
+          elif p['n_top'] == -1:  # Given by the number of GT poses.
+            n_top_curr = n_gt
+          else:  # Specified by the parameter n_top.
+            n_top_curr = p['n_top']
+          obj_ests_sorted = obj_ests_sorted[slice(0, n_top_curr)]
 
-          # Text info to write on the image at the pose estimate.
-          if p['vis_per_obj_id']:
-            est['text_info'] = [
-              {'name': 'score', 'val': est['score'], 'fmt': ':.2f'},
-            ]
-          else:
-            val = '{}:{:.2f}'.format(obj_id, est['score'])
-            est['text_info'] = [
-              {'name': 'score', 'val': val, 'fmt': ''},
-            ]
-          for error_type in p['error_types']:
-            if error_type in scene_errs:
-              if im_id in scene_errs[error_type]:
-                if obj_id in scene_errs[error_type][im_id]:
-                    err = scene_errs[error_type][im_id][obj_id][est_id]
-                    est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
-                    est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''})
+          # Get list of poses to visualize.
+          for est_id, est in enumerate(obj_ests_sorted):
+            est['obj_id'] = obj_id
 
-        im_ests_vis.append(obj_ests_sorted)
-        im_ests_vis_obj_ids.append(obj_id)
+            # Text info to write on the image at the pose estimate.
+            if p['vis_per_obj_id']:
+              est['text_info'] = [
+                {'name': 'score', 'val': est['score'], 'fmt': ':.2f'},
+              ]
+            else:
+              val = '{}:{:.2f}'.format(obj_id, est['score'])
+              est['text_info'] = [
+                {'name': 'score', 'val': val, 'fmt': ''},
+              ]
+            for error_type in p['error_types']:
+              if error_type in scene_errs:
+                if im_id in scene_errs[error_type]:
+                  if obj_id in scene_errs[error_type][im_id]:
+                    if est_id in scene_errs[error_type][im_id][obj_id]:
+                      err = scene_errs[error_type][im_id][obj_id][est_id]
+                      est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
+                      est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''})
 
-      # Join the per-object estimates if only one visualization is to be made.
-      if not p['vis_per_obj_id']:
-        im_ests_vis = [list(itertools.chain.from_iterable(im_ests_vis))]
+          im_ests_vis.append(obj_ests_sorted)
+          im_ests_vis_obj_ids.append(obj_id)
 
-      for ests_vis_id, ests_vis in enumerate(im_ests_vis):
+        # Join the per-object estimates if only one visualization is to be made.
+        if not p['vis_per_obj_id']:
+          im_ests_vis = [list(itertools.chain.from_iterable(im_ests_vis))]
 
-        # Load the color and depth images and prepare images for rendering.
-        rgb = None
-        if p['vis_rgb']:
-          if 'rgb' in dp_split['im_modalities']:
-            rgb = inout.load_im(dp_split['rgb_tpath'].format(
-              scene_id=scene_id, im_id=im_id))[:, :, :3]
-          elif 'gray' in dp_split['im_modalities']:
-            gray = inout.load_im(dp_split['gray_tpath'].format(
+        for ests_vis_id, ests_vis in enumerate(im_ests_vis):
+
+          # Load the color and depth images and prepare images for rendering.
+          rgb = None
+          if p['vis_rgb']:
+            if 'rgb' in dp_split['im_modalities']:
+              rgb = inout.load_im(dp_split['rgb_tpath'].format(
+                scene_id=scene_id, im_id=im_id))[:, :, :3]
+            elif 'gray' in dp_split['im_modalities']:
+              gray = inout.load_im(dp_split['gray_tpath'].format(
+                scene_id=scene_id, im_id=im_id))
+              rgb = np.dstack([gray, gray, gray])
+            else:
+              raise ValueError('RGB nor gray images are available.')
+
+          depth = None
+          if p['vis_depth_diff'] or (p['vis_rgb'] and p['vis_rgb_resolve_visib']):
+            depth = inout.load_depth(dp_split['depth_tpath'].format(
               scene_id=scene_id, im_id=im_id))
-            rgb = np.dstack([gray, gray, gray])
+            depth *= scene_camera[im_id]['depth_scale']  # Convert to [mm].
+
+          # Visualization name.
+          if p['vis_per_obj_id']:
+            vis_name = '{im_id:06d}_{obj_id:06d}'.format(
+              im_id=im_id, obj_id=im_ests_vis_obj_ids[ests_vis_id])
           else:
-            raise ValueError('RGB nor gray images are available.')
+            vis_name = '{im_id:06d}'.format(im_id=im_id)
 
-        depth = None
-        if p['vis_depth_diff'] or (p['vis_rgb'] and p['vis_rgb_resolve_visib']):
-          depth = inout.load_depth(dp_split['depth_tpath'].format(
-            scene_id=scene_id, im_id=im_id))
-          depth *= scene_camera[im_id]['depth_scale']  # Convert to [mm].
+          # Path to the output RGB visualization.
+          vis_rgb_path = None
+          if p['vis_rgb']:
+            vis_rgb_path = p['vis_rgb_tpath'].format(
+              vis_path=p['vis_path'], result_name=result_name, scene_id=scene_id,
+              vis_name=vis_name)
 
-        # Visualization name.
-        if p['vis_per_obj_id']:
-          vis_name = '{im_id:06d}_{obj_id:06d}'.format(
-            im_id=im_id, obj_id=im_ests_vis_obj_ids[ests_vis_id])
-        else:
-          vis_name = '{im_id:06d}'.format(im_id=im_id)
+          # Path to the output depth difference visualization.
+          vis_depth_diff_path = None
+          if p['vis_depth_diff']:
+            vis_depth_diff_path = p['vis_depth_diff_tpath'].format(
+              vis_path=p['vis_path'], result_name=result_name, scene_id=scene_id,
+              vis_name=vis_name)
 
-        # Path to the output RGB visualization.
-        vis_rgb_path = None
-        if p['vis_rgb']:
-          vis_rgb_path = p['vis_rgb_tpath'].format(
-            vis_path=p['vis_path'], result_name=result_name, scene_id=scene_id,
-            vis_name=vis_name)
+          # Visualization.
+          visualization.vis_object_poses(
+            poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
+            vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
+            vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt,
+            scene_id = scene_id, im_id = im_id, text_size=args.text_size)
 
-        # Path to the output depth difference visualization.
-        vis_depth_diff_path = None
-        if p['vis_depth_diff']:
-          vis_depth_diff_path = p['vis_depth_diff_tpath'].format(
-            vis_path=p['vis_path'], result_name=result_name, scene_id=scene_id,
-            vis_name=vis_name)
+  misc.log('Done.')
 
-        # Visualization.
-        visualization.vis_object_poses(
-          poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
-          vis_rgb_path=vis_rgb_path, vis_depth_diff_path=vis_depth_diff_path,
-          vis_rgb_resolve_visib=p['vis_rgb_resolve_visib'], n_gt=n_gt,
-          scene_id = scene_id, im_id = im_id, text_size=args.text_size)
-
-misc.log('Done.')
+if __name__ == "__main__":
+  main()

@@ -97,6 +97,8 @@ p = {
 
   # Folder for the calculated pose errors and performance scores.
   'eval_path': config.eval_path,
+  
+  'datasets_path': config.datasets_path,
 
   # File with a list of estimation targets to consider. The file is assumed to
   # be stored in the dataset folder.
@@ -112,6 +114,7 @@ parser.add_argument('--renderer_type', default=p['renderer_type'])
 parser.add_argument('--result_filenames',
                     default=','.join(p['result_filenames']),
                     help='Comma-separated names of files with results.')
+parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--results_path', default=p['results_path'])
 parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--targets_filename', default=p['targets_filename'])
@@ -119,6 +122,7 @@ parser.add_argument('--visib_gt_min', default=0)
 args = parser.parse_args()
 
 p['renderer_type'] = str(args.renderer_type)
+p['datasets_path'] = str(args.datasets_path)
 p['result_filenames'] = args.result_filenames.split(',')
 p['results_path'] = str(args.results_path)
 p['eval_path'] = str(args.eval_path)
@@ -176,6 +180,7 @@ for result_filename in p['result_filenames']:
       '--n_top={}'.format(error['n_top']),
       '--error_type={}'.format(error['type']),
       '--result_filenames={}'.format(result_filename),
+      '--datasets_path={}'.format(p['datasets_path']),
       '--renderer_type={}'.format(p['renderer_type']),
       '--results_path={}'.format(p['results_path']),
       '--eval_path={}'.format(p['eval_path']),
