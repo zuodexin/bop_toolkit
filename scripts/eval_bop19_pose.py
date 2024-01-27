@@ -19,28 +19,28 @@ from bop_toolkit_lib import misc
 p = {
   # Errors to calculate.
   'errors': [
-    # {
-    #   'n_top': -1,
-    #   'type': 'vsd',
-    #   'vsd_deltas': {
-    #     'hb': 15,
-    #     'icbin': 15,
-    #     'icmi': 15,
-    #     'itodd': 5,
-    #     'lm': 15,
-    #     'lmo': 15,
-    #     'ruapc': 15,
-    #     'tless': 15,
-    #     'tudl': 15,
-    #     'tyol': 15,
-    #     'ycbv': 15,
-    #     'hope': 15,
-    #     'robi': 15,
-    #   },
-    #   'vsd_taus': list(np.arange(0.05, 0.51, 0.05)),
-    #   'vsd_normalized_by_diameter': True,
-    #   'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
-    # },
+    {
+      'n_top': -1,
+      'type': 'vsd',
+      'vsd_deltas': {
+        'hb': 15,
+        'icbin': 15,
+        'icmi': 15,
+        'itodd': 5,
+        'lm': 15,
+        'lmo': 15,
+        'ruapc': 15,
+        'tless': 15,
+        'tudl': 15,
+        'tyol': 15,
+        'ycbv': 15,
+        'hope': 15,
+        'robi': 15,
+      },
+      'vsd_taus': list(np.arange(0.05, 0.51, 0.05)),
+      'vsd_normalized_by_diameter': True,
+      'correct_th': [[th] for th in np.arange(0.05, 0.51, 0.05)]
+    },
     {
       'n_top': -1,
       'type': 'mssd',
@@ -268,9 +268,9 @@ for result_filename in p['result_filenames']:
       average_recalls[error['type']]
 
   # Final score for the given dataset.
-  # final_scores['bop19_average_recall'] = np.mean([
-  #   average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
-  final_scores['bop19_average_recall'] = np.mean([average_recalls['ad']])
+  final_scores['bop19_average_recall'] = np.mean([
+    average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
+  # final_scores['bop19_average_recall'] = np.mean([average_recalls['ad']])
 
   # Average estimation time per image.
   final_scores['bop19_average_time_per_image'] = average_time_per_image

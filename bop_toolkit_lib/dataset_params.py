@@ -143,7 +143,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         # obj file witch contains uv
         "model_obj_tpath": join(models_path, "obj_{obj_id:06d}.obj"),
         # Path to a file with meta information about the object models.
-        "keypoints_path": join(models_path, "keypoints-{method}-{num}.json"),
+        "keypoints_path": join(models_path, "keypoints.pkl"),
         "corr_points_path": join(models_path, "corr_points.json"),
         "models_info_path": join(models_path, "models_info.json"),
     }
@@ -441,21 +441,21 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             #   os.path.dirname(datasets_path), 'coco', f'{split}', '{im_id}.png'),
             # Path template to a file with the coco GT annotations.
             "gt_coco_tpath": join(
-                os.path.dirname(datasets_path),
+                datasets_path,
                 "coco",
                 f"{dataset_name}",
                 "annotations",
                 f"gt_coco_{split}.json",
             ),
             "coco_bop_src_tpath": join(
-                os.path.dirname(datasets_path),
+                datasets_path,
                 "coco",
                 f"{dataset_name}",
                 "annotations",
                 f"bop_src_{split}.json",
             ),
             "pred_coco_tpath": join(
-                os.path.dirname(datasets_path),
+                datasets_path,
                 "coco",
                 f"{dataset_name}",
                 "predictions",
@@ -463,7 +463,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 f"pred_coco_{split}.json",
             ),
             "vis_coco_tpath": join(
-                os.path.dirname(datasets_path),
+                datasets_path,
                 "coco",
                 f"{dataset_name}",
                 "predictions",
@@ -611,6 +611,13 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{result_name}",
                 "{error_sign}",
                 "errors_{scene_id:06d}.json",
+            ),
+            "subset_tpath": join(
+                datasets_path,
+                dataset_name,
+                "subsets",
+                f"{split}" + (f"_{split}" if split_type else ""),
+                "{tag}.json",
             ),
         }
     )
