@@ -93,6 +93,8 @@ def main():
   parser.add_argument('--eval_path', default=p['eval_path'])
   parser.add_argument('--error_types', default=p['error_types'], nargs='+')
   parser.add_argument('--text_size', default=11, type=int)
+  parser.add_argument('--error_filter', default="", type=str)
+  parser.add_argument('--filter_threshold', default=0.5, type=float)
   args = parser.parse_args()
 
   p['result_filenames'] = args.result_filenames.split(',')
@@ -129,6 +131,9 @@ def main():
     model_type = 'eval'
     dp_model = dataset_params.get_model_params(
       p['datasets_path'], dataset, model_type)
+    
+    
+    
 
     # Rendering mode.
     renderer_modalities = []
@@ -145,6 +150,7 @@ def main():
 
     # Load object models.
     models = {}
+    diameters = {} 
     for obj_id in dp_model['obj_ids']:
       misc.log('Loading 3D model of object {}...'.format(obj_id))
       model_path = dp_model['model_tpath'].format(obj_id=obj_id)
@@ -152,6 +158,9 @@ def main():
       if not p['vis_orig_color']:
         model_color = tuple(colors[(obj_id - 1) % len(colors)])
       ren.add_object(obj_id, model_path, surf_color=model_color)
+      model_infos = dp_model["models_info_path"].format(obj_id=obj_id)
+      model_infos = inout.load_model_info(model_infos)
+      diameters[obj_id] = model_infos[obj_id]["diameter"]
 
     # Load pose estimates.
     misc.log('Loading pose estimates...')
@@ -250,8 +259,22 @@ def main():
                       err = scene_errs[error_type][im_id][obj_id][est_id]
                       est['text_info'].append({'name': error_type, 'val': err['error'], 'fmt': ':.2f'})
                       est['text_info'].append({'name': f'{error_type}_match_gt_id', 'val': err['match_gt_id'], 'fmt': ''})
+            
+            # filter out the poses with error smaller than the threshold
+            if args.error_filter != "":
+              obj_ests_sorted_filtered = []
+              for est_id, est in enumerate(obj_ests_sorted):
+                if im_id in scene_errs[error_type]:
+                  if obj_id in scene_errs[error_type][im_id]:
+                    if est_id in scene_errs[error_type][im_id][obj_id]:
+                      err = scene_errs[error_type][im_id][obj_id][est_id]['error']
+                      if err > args.filter_threshold * diameters[obj_id]:
+                        obj_ests_sorted_filtered.append(est)
+            else:
+              obj_ests_sorted_filtered = obj_ests_sorted
+              
 
-          im_ests_vis.append(obj_ests_sorted)
+          im_ests_vis.append(obj_ests_sorted_filtered)
           im_ests_vis_obj_ids.append(obj_id)
 
         # Join the per-object estimates if only one visualization is to be made.
@@ -300,6 +323,8 @@ def main():
               vis_path=p['vis_path'], result_name=result_name, scene_id=scene_id,
               vis_name=vis_name)
 
+          if args.error_filter != "" and len(ests_vis) == 0:
+            continue
           # Visualization.
           visualization.vis_object_poses(
             poses=ests_vis, K=K, renderer=ren, rgb=rgb, depth=depth,
