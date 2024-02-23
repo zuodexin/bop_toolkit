@@ -273,9 +273,9 @@ def main():
             else:
               obj_ests_sorted_filtered = obj_ests_sorted
               
-
-          im_ests_vis.append(obj_ests_sorted_filtered)
-          im_ests_vis_obj_ids.append(obj_id)
+          if n_gt > 0:
+            im_ests_vis.append(obj_ests_sorted_filtered)
+            im_ests_vis_obj_ids.append(obj_id)
 
         # Join the per-object estimates if only one visualization is to be made.
         if not p['vis_per_obj_id']:
