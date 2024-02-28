@@ -189,11 +189,14 @@ def binary_mask_to_polygon(binary_mask, tolerance=0):
     polygons = []
     # pad mask to close contours of shapes which start and end at an edge
     padded_binary_mask = np.pad(binary_mask, pad_width=1, mode='constant', constant_values=0)
-    contours = np.array(measure.find_contours(padded_binary_mask, 0.5))
+    
+    # print(padded_binary_mask.shape, measure.find_contours(padded_binary_mask, 0.5)[0].shape, measure.find_contours(padded_binary_mask, 0.5)[1].shape)
+    contours = np.array(measure.find_contours(padded_binary_mask, 0.5), dtype=object)
     # Reverse padding
     contours = contours - 1
     for contour in contours:
         # Make sure contour is closed
+        contour = np.array(contour, dtype=np.float32)
         contour = close_contour(contour)
         # Approximate contour by polygon
         polygon = measure.approximate_polygon(contour, tolerance)
