@@ -377,8 +377,8 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         # easy to mask mistake, use get_present_scene_ids instead
         # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
         if (
-            len(dataset_name.split("_")) == 1
-            or dataset_name.split("_")[1] == "RealSense"
+            len(dataset_name.split("_")) > 1
+            and dataset_name.split("_")[1] == "RealSense"
         ):
             p["im_size"] = (1280, 720)
         elif dataset_name in ["robi_300_c"]:

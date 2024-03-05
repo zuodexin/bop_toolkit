@@ -51,11 +51,11 @@ p = {
       'type': 'mspd',
       'correct_th': [[th] for th in np.arange(5, 51, 5)]
     },
-    # {
-    #   'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
-    #   'type': 'ad',
-    #   'correct_th': [[0.1]]
-    # },
+    {
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'type': 'ad',
+      'correct_th': [[0.1]]
+    },
     # {
     #   'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
     #   'type': 'rete',
