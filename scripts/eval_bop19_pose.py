@@ -63,16 +63,16 @@ p = {
     #   'type': 'rete',
     #   'correct_th': [[5.0, 5.0]]
     # },
-    # {
-    #   'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
-    #   'type': 're',
-    #   'correct_th': [[th] for th in np.arange(5, 21, 5)]
-    # },
-    # {
-    #   'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
-    #   'type': 'te',
-    #   'correct_th': [[th] for th in np.arange(5, 11, 5)]
-    # },
+    {
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'type': 're',
+      'correct_th': [[th] for th in np.arange(5, 51, 5)]
+    },
+    {
+      'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
+      'type': 'te',
+      'correct_th': [[th] for th in np.arange(5, 51, 5)]
+    },
   ],
 
   # Minimum visible surface fraction of a valid GT pose.
