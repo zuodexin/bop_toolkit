@@ -57,6 +57,7 @@ p = {
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default=p['dataset'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
+parser.add_argument("--dataset_split_type", default=p["dataset_split_type"])
 parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--delta', default=p['delta'])
 parser.add_argument('--use_gt_depth', default=False, action='store_true')
@@ -64,6 +65,7 @@ args = parser.parse_args()
 
 p['dataset'] = str(args.dataset)
 p['dataset_split'] = str(args.dataset_split)
+p["dataset_split_type"] = str(args.dataset_split_type)
 p['datasets_path'] = str(args.datasets_path)
 p['delta'] = float(args.delta)
 p['use_gt_depth'] = args.use_gt_depth

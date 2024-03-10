@@ -47,6 +47,11 @@ def get_camera_params(datasets_path, dataset_name, cam_type=None):
             cam_type = "uw"
         cam_filename = "camera_{}.json".format(cam_type)
 
+    elif dataset_name.split("_")[0] == "robi":
+        if cam_type is None:
+            cam_filename = "camera.json".format(cam_type)
+        else:
+            cam_filename = "camera_{}.json".format(cam_type)
     else:
         cam_filename = "camera.json"
 
@@ -384,12 +389,19 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         elif dataset_name in ["robi_300_c"]:
             p["im_size"] = (1280, 720)
         else:
-            p["im_size"] = (1280, 1024)
+            p["im_size"] = {
+                "train": {
+                    "reconst": (400, 400),
+                    "reconstinplane": (400, 400),
+                },
+                "test": {},
+                "vali": {},
+            }[split].get(split_type, (1280, 1024))
 
         if split == "test":
             p["depth_range"] = (346.31, 400)
             p["azimuth_range"] = (0, 2 * math.pi)
-            p["elev_range"] = (-math.pi, math.pi)
+            p["elev_range"] = (-0.5 * math.pi, 0.5 * math.pi)
     elif dataset_name[:9] == "pnpsphere":
         rgb_ext = ".png"
         p["im_size"] = (640, 480)
