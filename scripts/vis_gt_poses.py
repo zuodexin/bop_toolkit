@@ -77,6 +77,7 @@ parser.add_argument('--datasets_path', default=p['datasets_path'])
 parser.add_argument('--dataset', default=p['dataset'])
 parser.add_argument('--vis_path', default=p['vis_path'])
 parser.add_argument('--dataset_split', default=p['dataset_split'])
+parser.add_argument("--dataset_split_type", default=p["dataset_split_type"])
 parser.add_argument('--coarse_gt', action="store_true")
 parser.add_argument('--mask_available', action="store_true")
 parser.add_argument('--min_visib', default=-1, type=float)
@@ -87,6 +88,7 @@ p['dataset'] = args.dataset
 p['datasets_path'] = str(args.datasets_path)
 p['vis_path'] = str(args.vis_path)
 p['dataset_split'] = str(args.dataset_split)
+p["dataset_split_type"] = str(args.dataset_split_type)
 p['min_visib'] = args.min_visib
 p['text_size'] = args.text_size
 

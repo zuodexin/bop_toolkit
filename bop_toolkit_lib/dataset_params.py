@@ -393,10 +393,17 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "train": {
                     "reconst": (400, 400),
                     "reconstinplane": (400, 400),
+                    "realsense": (1280, 720),
                 },
-                "test": {},
-                "vali": {},
+                "test": {
+                    "realsense": (1280, 720),
+                },
+                "val": {
+                    "realsense": (1280, 720),
+                },
             }[split].get(split_type, (1280, 1024))
+            if split_type == "realsense":
+                rgb_ext = ".bmp"
 
         if split == "test":
             p["depth_range"] = (346.31, 400)
