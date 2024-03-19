@@ -167,7 +167,8 @@ def hinter_sampling(min_n_pts, radius=1.0):
 
 def sample_views(
       min_n_views, radius=1.0, azimuth_range=(0, 2 * math.pi),
-      elev_range=(-0.5 * math.pi, 0.5 * math.pi), mode='hinterstoisser'):
+      elev_range=(-0.5 * math.pi, 0.5 * math.pi), mode='hinterstoisser', 
+      return_pts=False):
   """Viewpoint sampling from a view sphere.
 
   :param min_n_views: The min. number of points to sample on the whole sphere.
@@ -235,6 +236,8 @@ def sample_views(
 
     views.append({'R': R, 't': t})
 
+  if return_pts:
+    return views, pts_level, pts
   return views, pts_level
 
 
