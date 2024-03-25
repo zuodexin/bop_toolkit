@@ -427,6 +427,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         if split_type == "pbr":
             p["scene_ids"] = list(range(50))
         split_path += "_" + split_type
+    split_str = split + (f"_{split_type}" if split_type else "")
 
     p.update(
         {
@@ -519,7 +520,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 datasets_path,
                 dataset_name,
                 "detections",
-                f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
+                f"{dataset_name}-{split_str}-" + "{tag}" + f"-bbox.json",
             ),
             "gpose_detection_tpath": join(
                 datasets_path,
@@ -652,7 +653,9 @@ def get_present_scene_ids(dp_split):
     :param dp_split: Path to a folder with datasets.
     :return: List with scene ID's.
     """
-    assert os.path.isdir(dp_split["split_path"])
+    assert os.path.isdir(dp_split["split_path"]), "Directory not found: {}".format(
+        dp_split["split_path"]
+    )
     scene_dirs = [
         d
         for d in glob.glob(os.path.join(dp_split["split_path"], "*"))
