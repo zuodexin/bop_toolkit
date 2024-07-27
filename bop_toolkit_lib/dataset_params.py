@@ -638,8 +638,45 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 datasets_path,
                 dataset_name,
                 "subsets",
-                f"{split}" + (f"_{split}" if split_type else ""),
+                f"{split}" + (f"_{split_type}" if split_type else ""),
                 "{tag}.json",
+            ),
+            "left_ir_tpath": join(
+                datasets_path,
+                dataset_name,
+                f"{split}" + (f"_{split_type}" if split_type else ""),
+                "{scene_id:06d}",
+                "ir_l",
+                "{im_id:06d}.png",
+            ),
+            "right_ir_tpath": join(
+                datasets_path,
+                dataset_name,
+                f"{split}" + (f"_{split_type}" if split_type else ""),
+                "{scene_id:06d}",
+                "ir_r",
+                "{im_id:06d}.png",
+            ),
+            "sim_depth_tpath": join(
+                datasets_path,
+                dataset_name,
+                f"{split}" + (f"_{split_type}" if split_type else ""),
+                "{scene_id:06d}",
+                "sim_depth",
+                "{im_id:06d}.png",
+            ),
+            "camera_right_tpath": join(
+                base_path,
+                "camera" + (f"_{split_type}" if split_type else "") + "_right.json",
+            ),
+            "mask_right_tpath": join(
+                split_path, "{scene_id:06d}", "mask_r", "{im_id:06d}_{gt_id:06d}.png"
+            ),
+            "mask_visib_right_tpath": join(
+                split_path,
+                "{scene_id:06d}",
+                "mask_visib_r",
+                "{im_id:06d}_{gt_id:06d}.png",
             ),
         }
     )

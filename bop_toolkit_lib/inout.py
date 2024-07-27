@@ -134,6 +134,9 @@ def load_cam_params(path):
   if 'depth_scale' in c.keys():
     cam['depth_scale'] = float(c['depth_scale'])
 
+  if 'baseline_dis' in c.keys():
+    cam['baseline_dis'] = float(c['baseline_dis'])
+
   return cam
 
 

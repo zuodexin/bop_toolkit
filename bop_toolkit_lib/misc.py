@@ -471,3 +471,14 @@ def random_sampling(point_cloud, num_points):
     indices = np.random.choice(num_total_points, num_points, replace=True)
     sampled_points = point_cloud[indices, :]
     return indices, sampled_points
+
+
+def cameraLPoseToCameraRPose(pose_l, baseline_dis=0.055):
+    pose_r = np.eye(4)
+    toc = np.linalg.inv(pose_l)
+    pose_r[:3, :3] = toc[:3, :3]
+    camera_l_x = np.array([1, 0, 0]).reshape(3, 1)
+    l_x_rot = toc[:3, :3] @ camera_l_x
+    pose_r[:3, 3] = toc[:3, 3] + l_x_rot.squeeze(-1) * baseline_dis
+    pose_r = np.linalg.inv(pose_r)  # tco
+    return pose_r

@@ -136,8 +136,8 @@ for scene_id in scene_ids:
 
       # Render depth image of the object model in the ground-truth pose.
       depth_gt_large = ren.render_object(
-        gt['obj_id'], gt['cam_R_m2c'], gt['cam_t_m2c'],
-        fx, fy, cx + ren_cx_offset, cy + ren_cy_offset)['depth']
+        gt['obj_id'], gt['cam_R_m2c'], gt['cam_t_m2c']/1000,
+        fx, fy, cx + ren_cx_offset, cy + ren_cy_offset)['depth']*1000
       depth_gt = depth_gt_large[
                    ren_cy_offset:(ren_cy_offset + im_height),
                    ren_cx_offset:(ren_cx_offset + im_width)]
