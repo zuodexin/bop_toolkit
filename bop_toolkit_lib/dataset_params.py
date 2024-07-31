@@ -381,29 +381,12 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         rgb_ext = ".png"
         # easy to mask mistake, use get_present_scene_ids instead
         # p['scene_ids'] = {'train': list(range(700)), 'test': list(range(28)), 'val': list(range(70))}[split]
-        if (
-            len(dataset_name.split("_")) > 1
-            and dataset_name.split("_")[1] == "RealSense"
-        ):
-            p["im_size"] = (1280, 720)
-        elif dataset_name in ["robi_300_c"]:
-            p["im_size"] = (1280, 720)
-        else:
-            p["im_size"] = {
-                "train": {
-                    "reconst": (400, 400),
-                    "reconstinplane": (400, 400),
-                    "realsense": (1280, 720),
-                },
-                "test": {
-                    "realsense": (1280, 720),
-                },
-                "val": {
-                    "realsense": (1280, 720),
-                },
-            }[split].get(split_type, (1280, 1024))
-            if split_type == "realsense":
-                rgb_ext = ".bmp"
+        p["im_size"] = {
+            "realsense": (1280, 720),
+            "ensenso": (1280, 1024),
+        }.get(split_type, (1280, 1024))
+        if split_type in ["realsense", "ensenso"]:
+            rgb_ext = ".bmp"
 
         if split == "test":
             p["depth_range"] = (346.31, 400)
@@ -664,6 +647,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "{scene_id:06d}",
                 "sim_depth",
                 "{im_id:06d}.png",
+            ),
+            "rgb_right_tpath": join(
+                split_path, "{scene_id:06d}", "rgb_r", "{im_id:06d}" + rgb_ext
             ),
             "camera_right_tpath": join(
                 base_path,
