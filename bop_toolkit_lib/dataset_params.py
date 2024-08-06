@@ -515,7 +515,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 datasets_path,
                 dataset_name,
                 "coco_detections",
-                f"{dataset_name}-{split}-" + "{tag}" + f"-bbox.json",
+                f"{dataset_name}-{split_str}-" + "{tag}" + f"-bbox.json",
             ),
             "segmentation_tpath": join(
                 datasets_path,
@@ -539,7 +539,7 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 dataset_name,
                 "detections",
                 "vis",
-                f"{dataset_name}-{split}-" + "{tag}",
+                f"{dataset_name}-{split_str}-" + "{tag}",
                 "{scene_id:06d}",
                 "{im_id:06d}.png",
             ),
