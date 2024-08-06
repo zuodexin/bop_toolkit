@@ -92,7 +92,10 @@ def save_json(path, content):
 
     if isinstance(content, dict):
       f.write('{\n')
-      content_sorted = sorted(content.items(), key=lambda x: x[0])
+      try:
+        content_sorted = sorted(content.items(), key=lambda x: int(x[0]))
+      except ValueError:
+        content_sorted = sorted(content.items(), key=lambda x: x[0])
       for elem_id, (k, v) in enumerate(content_sorted):
         f.write('  \"{}\": {}'.format(k, json.dumps(v, sort_keys=True)))
         if elem_id != len(content) - 1:

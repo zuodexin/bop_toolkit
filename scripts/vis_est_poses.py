@@ -26,7 +26,7 @@ p = {
   'n_top': 0,  # 0 = all estimates, -1 = given by the number of GT poses.
 
   # True = one visualization for each (im_id, obj_id), False = one per im_id.
-  'vis_per_obj_id': True,
+  'vis_per_obj_id': False,
 
   # Indicates whether to render RGB image.
   'vis_rgb': True,
@@ -94,7 +94,7 @@ def main():
   parser.add_argument('--error_types', default=p['error_types'], nargs='+')
   parser.add_argument('--text_size', default=11, type=int)
   parser.add_argument('--error_filter', default="", type=str)
-  parser.add_argument('--filter_threshold', default=0.5, type=float)
+  parser.add_argument('--filter_threshold', default=0, type=float)
   args = parser.parse_args()
 
   p['result_filenames'] = args.result_filenames.split(',')

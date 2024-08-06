@@ -70,7 +70,7 @@ def get_camera_params(datasets_path, dataset_name, cam_type=None):
     return p
 
 
-def get_model_params(datasets_path, dataset_name, model_type=None):
+def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=False):
     """Returns parameters of object models for the specified dataset.
 
     :param datasets_path: Path to a folder with datasets.
@@ -137,6 +137,10 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
 
     # Path to the folder with object models.
     models_path = join(datasets_path, dataset_name, models_folder_name)
+    
+    model_info_path = join(models_path, "models_info.json")
+    if strict_sym:
+        model_info_path = join(models_path, "models_info_strict_sym.json")
 
     p = {
         # ID's of all objects included in the dataset.
@@ -150,7 +154,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
         # Path to a file with meta information about the object models.
         "keypoints_path": join(models_path, "keypoints.pkl"),
         "corr_points_path": join(models_path, "corr_points.json"),
-        "models_info_path": join(models_path, "models_info.json"),
+        "models_info_path": model_info_path,
     }
 
     return p
