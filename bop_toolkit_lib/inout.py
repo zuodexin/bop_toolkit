@@ -183,6 +183,13 @@ def save_scene_camera(path, scene_camera):
     if 'cam_t_w2c' in im_camera.keys():
       im_camera['cam_t_w2c'] = im_camera['cam_t_w2c'].flatten().tolist()
   save_json(path, scene_camera)
+  
+def _gt_as_numpy(gt):
+    if "cam_R_m2c" in gt.keys():
+        gt["cam_R_m2c"] = np.array(gt["cam_R_m2c"], np.float64).reshape((3, 3))
+    if "cam_t_m2c" in gt.keys():
+        gt["cam_t_m2c"] = np.array(gt["cam_t_m2c"], np.float64).reshape((3, 1))
+    return gt
 
 
 def load_scene_gt(path):

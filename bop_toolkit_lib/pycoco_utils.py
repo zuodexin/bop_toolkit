@@ -235,15 +235,15 @@ def rle_to_binary_mask(rle):
     :param rle: Mask in RLE format
     :return: a 2D binary numpy array where '1's represent the object
     """
-    binary_array = np.zeros(np.prod(rle.get('size')), dtype=np.bool)
+    binary_array = np.zeros(np.prod(rle.get("size")), dtype=np.bool_)
     counts = rle.get('counts')
-    
+
     start = 0
     for i in range(len(counts)-1):
         start += counts[i] 
         end = start + counts[i+1] 
         binary_array[start:end] = (i + 1) % 2
-    
+
     binary_mask = binary_array.reshape(*rle.get('size'), order='F')
 
     return binary_mask
