@@ -465,12 +465,6 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
                 "bop_src",
                 f"bop_src_{split}.json",
             ),
-            "pred_coco_tpath": join(
-                datasets_path,
-                f"{dataset_name}",
-                "coco_detections",
-                f"{dataset_name}-{split}" + "-{tag}-bbox.json",
-            ),
             "vis_coco_tpath": join(
                 datasets_path,
                 "coco",
