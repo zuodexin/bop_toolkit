@@ -121,6 +121,7 @@ parser.add_argument('--results_path', default=p['results_path'])
 parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--targets_filename', default=p['targets_filename'])
 parser.add_argument('--visib_gt_min', default=0)
+parser.add_argument('--errors', default="mssd", nargs='+')
 args = parser.parse_args()
 
 p['renderer_type'] = str(args.renderer_type)
@@ -130,6 +131,13 @@ p['results_path'] = str(args.results_path)
 p['eval_path'] = str(args.eval_path)
 p['targets_filename'] = str(args.targets_filename)
 p['visib_gt_min'] = float(args.visib_gt_min)
+
+# remove unused errors
+errors = []
+for error in p['errors']:
+  if error['type'] in args.errors:
+    errors.append(error)
+p['errors'] = errors
 
 # Evaluation.
 # ------------------------------------------------------------------------------
@@ -270,8 +278,12 @@ for result_filename in p['result_filenames']:
       average_recalls[error['type']]
 
   # Final score for the given dataset.
-  final_scores['bop19_average_recall'] = np.mean([
-    average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
+  if 'vsd' in average_recalls:
+    final_scores['bop19_average_recall'] = np.mean([
+      average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
+  else:
+    final_scores['bop19_average_recall'] = np.mean([
+      average_recalls['mssd'], average_recalls['mspd']])
   # final_scores['bop19_average_recall'] = np.mean([average_recalls['ad']])
 
   # Average estimation time per image.
