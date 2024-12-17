@@ -121,7 +121,7 @@ parser.add_argument('--results_path', default=p['results_path'])
 parser.add_argument('--eval_path', default=p['eval_path'])
 parser.add_argument('--targets_filename', default=p['targets_filename'])
 parser.add_argument('--visib_gt_min', default=0)
-parser.add_argument('--errors', default="mssd", nargs='+')
+parser.add_argument('--errors', default=["mssd", "mspd", "vsd"], nargs='+')
 args = parser.parse_args()
 
 p['renderer_type'] = str(args.renderer_type)
