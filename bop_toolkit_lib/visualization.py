@@ -90,7 +90,7 @@ def depth_for_vis(depth, valid_start=0.2, valid_end=1.0):
 def vis_object_poses(
       poses, K, renderer, rgb=None, depth=None, vis_rgb_path=None,
       vis_depth_diff_path=None, vis_rgb_resolve_visib=False, n_gt=-1, 
-      scene_id=-1, im_id=-1, text_size=11):
+      scene_id=-1, im_id=-1, text_size=11, verbose=False):
   """Visualizes 3D object models in specified poses in a single image.
 
   Two visualizations are created:
@@ -187,26 +187,28 @@ def vis_object_poses(
         im_size = (obj_mask.shape[1], obj_mask.shape[0])
         ren_rgb_info = draw_rect(ren_rgb_info, bbox, bbox_color)
 
-        if 'text_info' in pose:
+        if 'text_info' in pose and verbose:
           text_loc = (bbox[0] + 2, bbox[1])
           ren_rgb_info = write_text_on_image(
             ren_rgb_info, pose['text_info'], text_loc, color=text_color,
             size=text_size)
       # Draw axis
+      
       ren_rgb = draw_axis(ren_rgb, pose['R'], pose['t'], K)
   
-  ren_rgb_info = write_text_on_image(
-    ren_rgb_info, [{'name': '#detections', 'val': len(poses), 'fmt': ':d'}], (0,0), color=(1.0, 1.0, 1.0),
-    size=11)
-  ren_rgb_info = write_text_on_image(
-    ren_rgb_info, [{'name': '#gt', 'val': n_gt, 'fmt': ':d'}], (0,11), color=(1.0, 1.0, 1.0),
-    size=11)
-  ren_rgb_info = write_text_on_image(
-    ren_rgb_info, [{'name': 'scene_id', 'val': scene_id, 'fmt': ':06d'}], (0,22), color=(1.0, 1.0, 1.0),
-    size=11)
-  ren_rgb_info = write_text_on_image(
-    ren_rgb_info, [{'name': 'im_id', 'val': im_id, 'fmt': ':06d'}], (0,33), color=(1.0, 1.0, 1.0),
-    size=11)
+  if verbose:
+    ren_rgb_info = write_text_on_image(
+      ren_rgb_info, [{'name': '#detections', 'val': len(poses), 'fmt': ':d'}], (0,0), color=(1.0, 1.0, 1.0),
+      size=11)
+    ren_rgb_info = write_text_on_image(
+      ren_rgb_info, [{'name': '#gt', 'val': n_gt, 'fmt': ':d'}], (0,11), color=(1.0, 1.0, 1.0),
+      size=11)
+    ren_rgb_info = write_text_on_image(
+      ren_rgb_info, [{'name': 'scene_id', 'val': scene_id, 'fmt': ':06d'}], (0,22), color=(1.0, 1.0, 1.0),
+      size=11)
+    ren_rgb_info = write_text_on_image(
+      ren_rgb_info, [{'name': 'im_id', 'val': im_id, 'fmt': ':06d'}], (0,33), color=(1.0, 1.0, 1.0),
+      size=11)
 
   # Blend and save the RGB visualization.
   if vis_rgb:
@@ -257,7 +259,7 @@ def draw_axis(img, R, t, K, length=30):
     axisPoints, _ = cv2.projectPoints(points, rotV, t, K, (0, 0, 0, 0))
     axisPoints = axisPoints.astype(np.int32)
     # print(rotV.shape, axisPoints.shape, t.shape, R.shape, K.shape)
-    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255,0,0), 3)
-    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0,255,0), 3)
-    img = cv2.line(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0,0,255), 3)
+    img = cv2.arrowedLine(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[0].ravel()), (255, 0, 0), 3)  # X 轴 (红色)
+    img = cv2.arrowedLine(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[1].ravel()), (0, 255, 0), 3)  # Y 轴 (绿色)
+    img = cv2.arrowedLine(img, tuple(axisPoints[3].ravel()), tuple(axisPoints[2].ravel()), (0, 0, 255), 3)  # Z 轴 (蓝色)
     return img
