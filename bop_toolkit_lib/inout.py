@@ -530,6 +530,9 @@ def load_ply(path):
   if {'texture_u', 'texture_v'}.issubset(set(pt_props_names)):
     is_texture_pt = True
     model['texture_uv'] = np.zeros((n_pts, 2), np.floating)
+  if {'s', 't'}.issubset(set(pt_props_names)):
+    is_texture_pt = True
+    model['texture_uv'] = np.zeros((n_pts, 2), np.floating)
 
   is_texture_face = False
   if {'texcoord'}.issubset(set(face_props_names)):
@@ -548,7 +551,9 @@ def load_ply(path):
   for pt_id in range(n_pts):
     prop_vals = {}
     load_props = ['x', 'y', 'z', 'nx', 'ny', 'nz',
-                  'red', 'green', 'blue', 'texture_u', 'texture_v']
+                  'red', 'green', 'blue', 'texture_u', 'texture_v',
+                  's', 't'
+                ]
     if is_binary:
       for prop in pt_props:
         format = formats[prop[1]]
@@ -577,8 +582,12 @@ def load_ply(path):
       model['colors'][pt_id, 2] = float(prop_vals['blue'])
 
     if is_texture_pt:
-      model['texture_uv'][pt_id, 0] = float(prop_vals['texture_u'])
-      model['texture_uv'][pt_id, 1] = float(prop_vals['texture_v'])
+      if 'texture_u' in prop_vals.keys():
+        model['texture_uv'][pt_id, 0] = float(prop_vals['texture_u'])
+        model['texture_uv'][pt_id, 1] = float(prop_vals['texture_v'])
+      elif 's' in prop_vals.keys():
+        model['texture_uv'][pt_id, 0] = float(prop_vals['s'])
+        model['texture_uv'][pt_id, 1] = float(prop_vals['t'])
 
   # Load faces.
   for face_id in range(n_faces):
