@@ -97,6 +97,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "hw627": list(range(1, 5)),
         "hw629": list(range(1, 4)),
         "pnpsphere": list(range(1, 2)),
+        "real275": list(range(1, 19)),
     }[dataset_name.split("_")[0]]
 
     # ID's of objects with ambiguous views evaluated using the ADI pose error
@@ -119,6 +120,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "hw627": [1, 2, 3, 4],
         "hw629": [],
         "pnpsphere": [1],
+        "real275": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12],
     }[dataset_name.split("_")[0]]
 
     # T-LESS includes two types of object models, CAD and reconstructed.
@@ -397,6 +399,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
             p["azimuth_range"] = (0, 2 * math.pi)
             p["elev_range"] = (-0.5 * math.pi, 0.5 * math.pi)
     elif dataset_name[:9] == "pnpsphere":
+        rgb_ext = ".png"
+        p["im_size"] = (640, 480)
+    elif dataset_name == "real275":
         rgb_ext = ".png"
         p["im_size"] = (640, 480)
     elif dataset_name[:5] == "hw627":
