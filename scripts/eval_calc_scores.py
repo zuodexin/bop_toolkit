@@ -47,6 +47,13 @@ p = {
     'ad': [0.1],
     'add': [0.1],
     'adi': [0.1],
+    # for ycbv
+    "ABSad": [2],  # 2cm
+    "ABSadd": [2],  # 2cm
+    "ABSadi": [2],  # 2cm
+    "AUCad": [10],  # max distance 10cm
+    "AUCadd": [10],  # max distance 10cm
+    "AUCadi": [10],  # max distance 10cm
   },
 
   # Pose errors that will be normalized by object diameter before thresholding.

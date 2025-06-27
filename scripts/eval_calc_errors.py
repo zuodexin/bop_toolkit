@@ -164,7 +164,7 @@ for result_filename in p['result_filenames']:
 
   # Load object models.
   models = {}
-  if p['error_type'] in ['ad', 'add', 'adi', 'mssd', 'mspd', 'proj']:
+  if p['error_type'] in ['ad', 'add', 'adi', 'mssd', 'mspd', 'proj', "ABSadd", "ABSadi", "ABSad", "AUCadd", "AUCadi", "AUCad"]:
     misc.log('Loading object models...')
     for obj_id in dp_model['obj_ids']:
       models[obj_id] = inout.load_ply(
@@ -363,7 +363,17 @@ for result_filename in p['result_filenames']:
                 else:  # 'adi'
                   e = [pose_error.adi(
                     R_e, t_e, R_g, t_g, models[obj_id]['pts'])]
-
+            elif p["error_type"] in ["ABSad", "ABSadi", "ABSadd", "AUCad", "AUCadi", "AUCadd"]:
+              if p["error_type"] in ["ABSad", "AUCad"]:
+                if obj_id in dp_model["symmetric_obj_ids"]:
+                  e = [pose_error.adi(R_e, t_e, R_g, t_g, models[obj_id]["pts"])/ 10]  # mm to cm
+                else:
+                  e = [pose_error.add(R_e, t_e, R_g, t_g, models[obj_id]["pts"]) / 10]
+              elif p["error_type"] in ["ABSadd", "AUCadd"]:
+                e = [pose_error.add(R_e, t_e, R_g, t_g, models[obj_id]["pts"]) / 10]
+              else: # ABSadi, AUCadi
+                e = [pose_error.adi(R_e, t_e, R_g, t_g, models[obj_id]["pts"]) / 10]
+                
             elif p['error_type'] == 'cus':
               if sphere_projections_overlap:
                 e = [pose_error.cus(

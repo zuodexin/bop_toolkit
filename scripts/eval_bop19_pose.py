@@ -74,6 +74,26 @@ p = {
       'type': 'te',
       'correct_th': [[th] for th in np.arange(5, 51, 5)]
     },
+    {"n_top": -1, "type": "ABSadd", "correct_th": [[th] for th in [2]]},
+    {"n_top": -1, "type": "ABSadi", "correct_th": [[th] for th in [2]]},
+    # ABSadi for symmetric objects, ABSadd for normal objects
+    {"n_top": -1, "type": "ABSad", "correct_th": [[th] for th in [2]]},
+    {
+      "n_top": -1,
+      "type": "AUCadd",
+      "correct_th": [[th] for th in np.linspace(10 / 10, 10, num=10)],
+    },
+    {
+      "n_top": -1,
+      "type": "AUCadi",
+      "correct_th": [[th] for th in np.linspace(10 / 10, 10, num=10)],
+    },
+    # AUCadi for symmetric objects, AUCadd for normal objects
+    {
+      "n_top": -1,
+      "type": "AUCad",
+      "correct_th": [[th] for th in np.linspace(10 / 10, 10, num=10)],
+    },
   ],
 
   # Minimum visible surface fraction of a valid GT pose.
