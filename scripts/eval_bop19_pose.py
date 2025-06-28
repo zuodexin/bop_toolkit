@@ -59,6 +59,7 @@ p = {
       'type': 'ad',
       'correct_th': [[0.1]]
     },
+    {'n_top':-1, 'type': 'adoryon', 'correct_th': [[0.1]]},
     # {
     #   'n_top': -1, # 0表示取出所有检测，-1表示按score取出前gt数量个检测
     #   'type': 'rete',
@@ -302,8 +303,6 @@ for result_filename in p['result_filenames']:
   if 'vsd' in average_recalls and "mssd" in average_recalls and "mspd" in average_recalls:
     final_scores['bop19_average_recall'] = np.mean([
       average_recalls['vsd'], average_recalls['mssd'], average_recalls['mspd']])
-  elif "ad" in average_recalls:
-    final_scores['bop19_ADD(-S)'] = np.mean([average_recalls['ad']])
 
   # Average estimation time per image.
   final_scores['bop19_average_time_per_image'] = average_time_per_image

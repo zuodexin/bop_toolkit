@@ -54,10 +54,12 @@ p = {
     "AUCad": [10],  # max distance 10cm
     "AUCadd": [10],  # max distance 10cm
     "AUCadi": [10],  # max distance 10cm
+    # for real275
+    "adoryon": [0.1],  # 0.1 diamter
   },
 
   # Pose errors that will be normalized by object diameter before thresholding.
-  'normalized_by_diameter': ['ad', 'add', 'adi', 'mssd'],
+  'normalized_by_diameter': ['ad', 'add', 'adi', 'mssd', 'adoryon'],
 
   # Pose errors that will be normalized the image width before thresholding.
   'normalized_by_im_width': ['mspd'],
@@ -178,6 +180,19 @@ for error_dir_path in p['error_dir_paths']:
   model_type = 'eval'
   dp_model = dataset_params.get_model_params(
     p['datasets_path'], dataset, model_type)
+  
+  # Load object models.
+  models = {}
+  if err_type in ['adoryon']:
+    misc.log('Loading object models...')
+    for obj_id in dp_model['obj_ids']:
+      models[obj_id] = inout.load_ply(
+        dp_model['model_tpath'].format(obj_id=obj_id))
+      print(dp_model['model_tpath'].format(obj_id=obj_id))
+      print("number of points:", len(models[obj_id]['pts']))
+      if len(models[obj_id]['pts']) > 5000:
+        _, model_points = misc.random_sampling(models[obj_id]['pts'], 5000)
+        _, models[obj_id]['pts'] = misc.farthest_point_sampling(model_points, 1000)
 
   # Load info about the object models.
   models_info = inout.load_json(dp_model['models_info_path'], keys_to_int=True)
@@ -252,7 +267,10 @@ for error_dir_path in p['error_dir_paths']:
     # Normalize the errors by the object diameter.
     if err_type in p['normalized_by_diameter']:
       for err in scene_errs:
-        diameter = float(models_info[err['obj_id']]['diameter'])
+        if err_type in ["adoryon"]:
+          diameter = float(misc.calc_diameter_oryon(models[err['obj_id']]['pts']))
+        else:
+          diameter = float(models_info[err['obj_id']]['diameter'])
         for gt_id in err['errors'].keys():
           err['errors'][gt_id] = [e / diameter for e in err['errors'][gt_id]]
 

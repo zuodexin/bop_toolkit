@@ -316,6 +316,11 @@ def calc_pts_diameter2(pts):
   diameter = np.max(dists)
   return diameter
 
+def calc_diameter_oryon(pcd : np.ndarray) -> float:
+  xyz = pcd[:,:3]
+  maxs, mins = np.max(xyz,axis=0), np.min(xyz,axis=0)
+  return max(maxs-mins)
+
 
 def overlapping_sphere_projections(radius, p1, p2):
   """Checks if projections of two spheres overlap (approximated).

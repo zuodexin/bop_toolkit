@@ -164,7 +164,7 @@ for result_filename in p['result_filenames']:
 
   # Load object models.
   models = {}
-  if p['error_type'] in ['ad', 'add', 'adi', 'mssd', 'mspd', 'proj', "ABSadd", "ABSadi", "ABSad", "AUCadd", "AUCadi", "AUCad"]:
+  if p['error_type'] in ['ad', 'add', 'adi', 'mssd', 'mspd', 'proj', "ABSadd", "ABSadi", "ABSad", "AUCadd", "AUCadi", "AUCad", "adoryon"]:
     misc.log('Loading object models...')
     for obj_id in dp_model['obj_ids']:
       models[obj_id] = inout.load_ply(
@@ -177,7 +177,7 @@ for result_filename in p['result_filenames']:
 
   # Load models info.
   models_info = None
-  if p['error_type'] in ['ad', 'add', 'adi', 'vsd', 'mssd', 'mspd', 'cus', 're', 'rete']:
+  if p['error_type'] in ['ad', 'add', 'adi', 'vsd', 'mssd', 'mspd', 'cus', 're', 'rete', "adoryon"]:
     models_info = inout.load_json(
       dp_model['models_info_path'], keys_to_int=True)
 
@@ -312,7 +312,7 @@ for result_filename in p['result_filenames']:
             # Check if the bounding spheres of the object in the two poses
             # overlap (to speed up calculation of some errors).
             spheres_overlap = None
-            if p['error_type'] in ['ad', 'add', 'adi', 'mssd']:
+            if p['error_type'] in ['ad', 'add', 'adi', 'mssd', 'adoryon']:
               center_dist = np.linalg.norm(t_e - t_g)
               spheres_overlap = center_dist < models_info[obj_id]['diameter']
 
@@ -338,7 +338,7 @@ for result_filename in p['result_filenames']:
                 R_e, t_e, R_g, t_g, K, models[obj_id]['pts'],
                 models_sym[obj_id])]
 
-            elif p['error_type'] in ['ad', 'add', 'adi']:
+            elif p['error_type'] in ['ad', 'add', 'adi', 'adoryon']:
               if not spheres_overlap:
                 # Infinite error if the bounding spheres do not overlap. With
                 # typically used values of the correctness threshold for the AD
@@ -346,7 +346,7 @@ for result_filename in p['result_filenames']:
                 # would be considered incorrect anyway.
                 e = [float('inf')]
               else:
-                if p['error_type'] == 'ad':
+                if p['error_type'] in ['ad', 'adoryon']:
                   if obj_id in dp_model['symmetric_obj_ids']:
                     e = [pose_error.adi(
                       R_e, t_e, R_g, t_g, models[obj_id]['pts'])]
