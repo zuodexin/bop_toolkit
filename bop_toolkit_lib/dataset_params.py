@@ -94,8 +94,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "ycbv": list(range(1, 22)),
         "hope": list(range(1, 29)),
         "robi": list(range(1, 8)),
-        "hw627": list(range(1, 5)),
-        "hw629": list(range(1, 4)),
+        "midea": list(range(1, 3)),
         "pnpsphere": list(range(1, 2)),
         "real275": list(range(1, 19)),
     }[dataset_name.split("_")[0]]
@@ -117,8 +116,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "ycbv": [1, 13, 14, 16, 18, 19, 20, 21],
         "hope": None,  # Not defined yet.
         "robi": [1, 2, 4, 7],
-        "hw627": [1, 2, 3, 4],
-        "hw629": [],
+        "midea": [],
         "pnpsphere": [1],
         "real275": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12],
     }[dataset_name.split("_")[0]]
@@ -404,12 +402,9 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
     elif dataset_name == "real275":
         rgb_ext = ".png"
         p["im_size"] = (640, 480)
-    elif dataset_name[:5] == "hw627":
+    elif dataset_name == "midea":
         rgb_ext = ".png"
-        p["im_size"] = (320, 240)
-    elif dataset_name[:5] == "hw629":
-        rgb_ext = ".png"
-        p["im_size"] = (320, 240)
+        p["im_size"] = (640, 480)
     else:
         raise ValueError("Unknown BOP dataset ({}).".format(dataset_name))
 
