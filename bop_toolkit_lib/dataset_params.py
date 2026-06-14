@@ -94,7 +94,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "ycbv": list(range(1, 22)),
         "hope": list(range(1, 29)),
         "robi": list(range(1, 8)),
-        "midea": list(range(1, 3)),
+        "midea": list(range(1, 4)),
         "pnpsphere": list(range(1, 2)),
         "real275": list(range(1, 19)),
     }[dataset_name.split("_")[0]]
