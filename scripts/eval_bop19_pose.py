@@ -34,6 +34,8 @@ p = {
         'tudl': 15,
         'tyol': 15,
         'ycbv': 15,
+        'ycbineoat': 15,
+        'ho3d': 15,
         'hope': 15,
         'real275': 15,
         'robi': 15,

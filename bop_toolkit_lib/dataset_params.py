@@ -97,6 +97,8 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "midea": list(range(1, 4)),
         "pnpsphere": list(range(1, 2)),
         "real275": list(range(1, 19)),
+        "ycbineoat": [2, 3, 4, 5, 12],
+        "ho3d": [2, 3, 5, 9, 10, 11, 12, 14, 15, 17],
     }[dataset_name.split("_")[0]]
 
     # ID's of objects with ambiguous views evaluated using the ADI pose error
@@ -119,6 +121,8 @@ def get_model_params(datasets_path, dataset_name, model_type=None, strict_sym=Fa
         "midea": [],
         "pnpsphere": [1],
         "real275": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12],
+        "ycbineoat": [],  # 5 个物体（bleach/cracker_box/sugar_box/tomato/mustard）均非对称
+        "ho3d": [],  # 10 个物体均非对称
     }[dataset_name.split("_")[0]]
 
     # T-LESS includes two types of object models, CAD and reconstructed.
@@ -400,6 +404,14 @@ def get_split_params(datasets_path, dataset_name, split, split_type=None):
         rgb_ext = ".png"
         p["im_size"] = (640, 480)
     elif dataset_name == "real275":
+        rgb_ext = ".png"
+        p["im_size"] = (640, 480)
+    elif dataset_name == "ycbineoat":
+        # YCBInEOAT 转 BOP: 9 个序列 (scene_id 0..8), 640x480, 无官方 split 划分。
+        rgb_ext = ".png"
+        p["im_size"] = (640, 480)
+    elif dataset_name == "ho3d":
+        # HO-3D v3 转 BOP: train 55 / evaluation 13 序列 (scene_id 0..54 / 0..12), 640x480.
         rgb_ext = ".png"
         p["im_size"] = (640, 480)
     elif dataset_name == "midea":
